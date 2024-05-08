@@ -30,7 +30,7 @@ from experiment import Experiment
 import os
 from joblib import dump
 import itertools
-
+from pathlib import Path
 
 class DQPipeline(PipelinesConfiguration, Experiment):
     """
@@ -619,12 +619,14 @@ class DQPipeline(PipelinesConfiguration, Experiment):
                 f"Check NaN Train: {X_train_dropped.columns[X_train_dropped.isna().any()].tolist()} "
             )
             if len(X_train_dropped.columns[X_train_dropped.isna().any()].tolist()) > 0:
+                Path("./debugging").mkdir(parents=True, exist_ok=True)
                 X_train_dropped[X_train_dropped.isna().any(axis=1)].to_csv("./debugging/NaN_Train_Cols.csv", index=False)
 
             print(
                 f"Check inf Train: {X_train_dropped.columns[np.isinf(X_train_dropped).any()].tolist()} "
             )
             if len(X_train_dropped.columns[X_train_dropped.isna().any()].tolist()) > 0:
+                Path("./debugging").mkdir(parents=True, exist_ok=True)
                 X_train_dropped.columns[X_train_dropped.isna().any()].tolist().to_csv("./debugging/Inf_Train_Cols.csv", index=False)
 
             return X_train_dropped
@@ -681,7 +683,6 @@ class DQPipeline(PipelinesConfiguration, Experiment):
         """
         Speichert die Pipeline als html-Datei.
         """
-        from pathlib import Path
         Path("./visualization").mkdir(parents=True, exist_ok=True)
         Path("./visualization/PipelineDQ").mkdir(parents=True, exist_ok=True)
         with open(file=f"{filename}.html", mode="w", encoding="utf-8") as f:

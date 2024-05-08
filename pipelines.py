@@ -37,7 +37,6 @@ from preprocessing.dummy.XCopySchemaTransformerPattern import (
 
 from preprocessing.timeseries.DateEncoder import DateEncoder
 
-from preprocessing.timeseries.old.TimeTransformer import TimeTransformer
 from preprocessing.timeseries.TimeSeriesImputer import TimeSeriesImputer
 
 # from preprocessing.estimator.KMedian import KMedianEstimator
