@@ -25,7 +25,6 @@
 ```python
 import numpy as np
 import pandas as pd
-from dataqualitypipeline import DQPipeline
 from dataqualitypipeline import initialize_autoencoder, initialize_autoencoder_modified
 from pyod.models.iforest import IForest
 from pyod.models.lof import LOF
@@ -33,7 +32,7 @@ from pyod.models.lof import LOF
 df_data = pd.read_csv("./HOWTO/players_20.csv")
 clf_lof = LOF(n_jobs=-1)
 
-
+from dataqualitypipeline import DQPipeline
 dq_pipe = DQPipeline(
     nominal_columns=["player_tags","preferred_foot",
                      "work_rate","team_position","loaned_from"],
