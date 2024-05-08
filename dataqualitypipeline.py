@@ -601,21 +601,32 @@ class DQPipeline(PipelinesConfiguration, Experiment):
         X_train_cols_no_variance = X_train.loc[:, X_train.std() == 0].columns
         print("No Variance in follow Train Columns: ", X_train_cols_no_variance)
 
-        drop_columns_no_variance = (
-            X_train_cols_no_variance.tolist()
-        )
+        X_train_cols_only_nans = X_train.columns[X_train.isna().any()]
+        print("Only NaNs in Train Columns: ", X_train_cols_only_nans)
+
+        drop_columns_no_variance =  X_train_cols_no_variance.tolist() +  X_train_cols_only_nans.tolist()
+        
+        # print("\n\n\n\n")
+        # print(drop_columns_no_variance)
 
         if remove_cols == True:
             X_train_dropped = X_train.drop(drop_columns_no_variance, axis=1)
+
             print(
                 f"Shape Train after drop: {X_train_dropped.shape} "
             )
             print(
-                f"Check NaN Train: {X_train_dropped.isna().any().sum()} "
+                f"Check NaN Train: {X_train_dropped.columns[X_train_dropped.isna().any()].tolist()} "
             )
+            if len(X_train_dropped.columns[X_train_dropped.isna().any()].tolist()) > 0:
+                X_train_dropped[X_train_dropped.isna().any(axis=1)].to_csv("./debugging/NaN_Train_Cols.csv", index=False)
+
             print(
-                f"Check inf Train: {np.isinf(X_train_dropped).any().sum()} "
+                f"Check inf Train: {X_train_dropped.columns[np.isinf(X_train_dropped).any()].tolist()} "
             )
+            if len(X_train_dropped.columns[X_train_dropped.isna().any()].tolist()) > 0:
+                X_train_dropped.columns[X_train_dropped.isna().any()].tolist().to_csv("./debugging/Inf_Train_Cols.csv", index=False)
+
             return X_train_dropped
         else:
             return X_train
@@ -632,8 +643,15 @@ class DQPipeline(PipelinesConfiguration, Experiment):
         print("No Variance in follow Train Columns: ", X_train_cols_no_variance)
         print("No Variance in follow Test Columns: ", X_test_cols_no_variance)
 
+        X_train_cols_only_nans = X_train.columns[X_train.isna().any()]
+        X_test_cols_only_nans = X_test.columns[X_test.isna().any()]
+
+        print("Only NaNs in follow Train Columns: ", X_train_cols_only_nans)
+        print("Only NaNs in follow Test Columns: ", X_test_cols_only_nans)
+
         drop_columns_no_variance = (
-            X_train_cols_no_variance.tolist() + X_test_cols_no_variance.tolist()
+            X_train_cols_no_variance.tolist() + X_test_cols_no_variance.tolist() + \
+            X_train_cols_only_nans + X_test_cols_only_nans
         )
         # print(drop_columns_no_variance)
 
@@ -650,10 +668,10 @@ class DQPipeline(PipelinesConfiguration, Experiment):
                 f"Shape Train after drop: {X_train_dropped.shape} / Shape Test after drop: {X_test_dropped.shape}\n"
             )
             print(
-                f"Check NaN Train: {X_train_dropped.isna().any().sum()} / Check Nan Test: {X_test_dropped.isna().any().sum()}\n"
+                f"Check NaN Train: {X_train_dropped.columns[X_train_dropped.isna().any()].tolist()} "
             )
             print(
-                f"Check inf Train: {np.isinf(X_train_dropped).any().sum()} / Check inf Test: {np.isinf(X_test_dropped).any().sum()}\n"
+                f"Check inf Train: {X_train_dropped.columns[np.isinf(X_train_dropped).any()].tolist()} "
             )
             return X_train_dropped, X_test_dropped
         else:
