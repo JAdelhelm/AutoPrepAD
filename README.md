@@ -1,5 +1,12 @@
 # Automated Anomaly Detection Preprocessing Pipeline
 
+### I used the Pipeline and Transformer concept of sklearn to create this preprocessing Pipeline.
+- Pipeline: https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
+- Transformer: https://scikit-learn.org/stable/modules/generated/sklearn.base.TransformerMixin.html
+
+<iframe src="./visualization/PipelineDQ.html" width="100%" height="500px"></iframe>
+
+
 ### Abstract View - Project
 ![alt text](./images/project.png)
 
