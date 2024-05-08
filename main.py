@@ -12,20 +12,18 @@ from pyod.models.lof import LOF
 if __name__ == "__main__":
     df_data = pd.read_csv("./HOWTO/players_20.csv")
 
-
     # import torch
     clf_if = IForest(n_jobs=-1)
-    clf_ae = initialize_autoencoder_modified(epochs=100)
+    clf_ae = initialize_autoencoder_modified(epochs=200)
     clf_lof = LOF(n_jobs=-1)
 
     dq_pipe = DQPipeline(
-        nominal_columns=[
-                        "player_tags","preferred_foot",
-                        "work_rate","team_position"],
+        nominal_columns=["player_tags","preferred_foot",
+                        "work_rate","team_position","loaned_from"],
 
         exclude_columns=["player_url","body_type","short_name", "long_name", 
                         "team_jersey_number","joined","contract_valid_until",
-                        "real_face","loaned_from","nation_position","player_positions","nationality","club"],
+                        "real_face","nation_position","player_positions","nationality","club"],
 
         time_column_names=["dob"],
         deactivate_pattern_recognition=True,
@@ -33,10 +31,13 @@ if __name__ == "__main__":
     )
 
     X_output = dq_pipe.run_pipeline(
-        X_train=df_data,
-        clf=clf_if,
+        X_train=df_data.iloc[:,0:37],
+        # X_train=df_data.iloc[:,:-26],
+        clf=clf_lof,
         dump_model=False,
     )
+
+
     dq_pipe.visualize_pipeline_structure_html()
 
     X_output.to_csv("fifa_anomalies.csv", index=False)
