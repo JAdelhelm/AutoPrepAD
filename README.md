@@ -1,15 +1,18 @@
 # Automated Anomaly Detection Preprocessing Pipeline
+---
 
-### Abstract View - Project
+## Abstract View - Project
 ![alt text](./images/project.png)
 
-### Decision rules of the pipeline
+---
+
+## Decision rules of the pipeline
 ![alt text](./images/decision_rules.png)
 
 
 
 ---
-## How to use the pipeline
+### How to use the pipeline
 
 ```python
 import numpy as np
