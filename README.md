@@ -32,6 +32,7 @@ from pyod.models.lof import LOF
 df_data = pd.read_csv("./HOWTO/players_20.csv")
 clf_lof = LOF(n_jobs=-1)
 
+# Init Preprocessing Pipeline
 from dataqualitypipeline import DQPipeline
 dq_pipe = DQPipeline(
     nominal_columns=["player_tags","preferred_foot",
@@ -47,9 +48,10 @@ dq_pipe = DQPipeline(
 )
 
 
-
+# Run Preprocessing-Pipeline (Named dq_pipe)
 X_output = dq_pipe.run_pipeline(
     X_train=df_data.iloc[:,0:37],
+# Add Anomaly Detection Model (clf)
     clf=clf_lof,
     dump_model=False,
 )
