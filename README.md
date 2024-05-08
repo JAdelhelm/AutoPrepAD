@@ -1,12 +1,12 @@
 # Automated Anomaly Detection Preprocessing Pipeline
 
-![alt text](./images/pipeline.png)
+### Abstract View - Project
+![alt text](./images/project.png)
 
 ### Decision rules of the pipeline
 ![alt text](./images/decision_rules.png)
 
-### Abstract View - Project
-![alt text](./images/project.png)
+
 
 ---
 ## How to use the pipeline
