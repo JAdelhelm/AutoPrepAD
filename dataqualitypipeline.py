@@ -138,8 +138,13 @@ class DQPipeline(PipelinesConfiguration, Experiment):
         # For-Loop removes time_column_names from other class if time_columns should be excluded.
         if self.exclude_columns is not None:
             for col in self.exclude_columns:
-                if col in self.time_column_names:
-                    self.time_column_names.remove(col)
+                try:
+                    if col in self.time_column_names:
+                        self.time_column_names.remove(col)
+                except Exception as e:
+                    print(e)
+                    
+
 
         self.remove_columns_with_no_variance = remove_columns_with_no_variance
         self._pipeline_structure = self.pipeline_configuration()
@@ -421,10 +426,10 @@ class DQPipeline(PipelinesConfiguration, Experiment):
     ) -> Pipeline:
         self.model_name = type(clf).__name__
         
-        if clf is None:
+        if X_test is None and clf is not None:
             print("Only X_train input will be transformed...")
-            return self.run_only_pipeline(X_train=X_train)
-        elif clf is not None:
+            return self.run_only_pipeline(X_train=X_train, clf=clf, dump_model=dump_model)
+        elif X_test is not None:
             if isinstance(inject_anomalies, pd.DataFrame):
                 return self.run_pipeline_with_AD_injection(
                     X_train=X_train,
@@ -442,14 +447,56 @@ class DQPipeline(PipelinesConfiguration, Experiment):
             print("An error occurred in your pipelines.")
             raise Exception
 
-    def run_only_pipeline(self, X_train: pd.DataFrame) -> Pipeline:
+    def run_only_pipeline(self, X_train: pd.DataFrame, clf, dump_model) -> Pipeline:
         """
         Only the data will be transformed by the pipeline.
         """
         print("Running only Transformation-Pipeline...")
-        X_train_transformed = self._pipeline_structure.fit_transform(X_train)
+        try:
+            X_train_transformed = self._pipeline_structure.fit_transform(X_train)
+        except Exception as e:
+            print(X_train.isna().sum(),"\n",e,"\n")
+            raise
 
-        return X_train_transformed
+
+        X_train_transformed = self.check_variance_train_only(
+            X_train=X_train_transformed,
+            remove_cols=self.remove_columns_with_no_variance,
+        )
+
+        self._X_train_transformed = X_train_transformed
+
+        clf_no_injection = clf
+        clf_no_injection.fit(X_train_transformed)
+
+        if dump_model == True:
+            try:
+                dump(clf, f"clf_{type(clf).__name__}.joblib")
+            except:
+                print("Could not dump the model.")
+
+        y_pred_decision_score = clf_no_injection.decision_function(X_train_transformed)
+        X_train["AnomalyScore"] = y_pred_decision_score
+        scaler = MinMaxScaler()
+        X_train[["AnomalyScore"]] = scaler.fit_transform(X_train[["AnomalyScore"]])
+
+        try:
+            column_name_mad_total = [
+                col for col in X_train_transformed.columns if col.endswith("MAD_Total")
+            ][0]
+            X_train["MAD_Total"] = X_train_transformed[column_name_mad_total]
+            column_name_tukey_total = [
+                col for col in X_train_transformed.columns if col.endswith("Tukey_Total")
+            ][0]
+            X_train["Tukey_Total"] = X_train_transformed[column_name_tukey_total]
+
+            return X_train.sort_values(
+                ["AnomalyScore", "MAD_Total", "Tukey_Total"], ascending=False
+            )
+        except Exception as e:
+            return X_train.sort_values("AnomalyScore", ascending=False)
+
+
 
     def run_pipeline_with_AD_no_injection(
         self,
@@ -468,7 +515,6 @@ class DQPipeline(PipelinesConfiguration, Experiment):
         Optional:
         - The model can be temporarily stored using the `dump_model` parameter.
         """
-
         self._pipeline_structure.fit(X_train)
 
         X_train_transformed = self._pipeline_structure.transform(X_train)
@@ -548,6 +594,34 @@ class DQPipeline(PipelinesConfiguration, Experiment):
             return self.X_test_output_injected
         else:
             print("Invalid Injection of Anomalies.")
+
+    def check_variance_train_only(
+        self, X_train, remove_cols=False
+    ) -> (pd.DataFrame, pd.DataFrame):
+        X_train_cols_no_variance = X_train.loc[:, X_train.std() == 0].columns
+        print("No Variance in follow Train Columns: ", X_train_cols_no_variance)
+
+        drop_columns_no_variance = (
+            X_train_cols_no_variance.tolist()
+        )
+
+        if remove_cols == True:
+            X_train_dropped = X_train.drop(drop_columns_no_variance, axis=1)
+            print(
+                f"Shape Train after drop: {X_train_dropped.shape} "
+            )
+            print(
+                f"Check NaN Train: {X_train_dropped.isna().any().sum()} "
+            )
+            print(
+                f"Check inf Train: {np.isinf(X_train_dropped).any().sum()} "
+            )
+            return X_train_dropped
+        else:
+            return X_train
+
+
+
 
     def check_variance_monitoring(
         self, X_train, X_test, remove_cols=False
@@ -660,7 +734,8 @@ def initialize_autoencoder():
         return clf_ae
 
 
-def initialize_autoencoder_modified():
+def initialize_autoencoder_modified(epochs=20):
+    import torch
     from pyod_modified.CustomAutoEncoder.torchCustomAE import AutoEncoder
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using {device} device")
@@ -676,7 +751,7 @@ def initialize_autoencoder_modified():
         print(f"{num_cores} cores will be used...")
 
         clf_ae = AutoEncoder(
-            epochs=20,
+            epochs=epochs,
             batch_size=batch_size_user,
             learning_rate=0.001,
             contamination=0.1,
@@ -699,18 +774,18 @@ def initialize_autoencoder_modified():
 
 
 def dummy_data():
-    train_daten = pd.DataFrame(
+    train_data = pd.DataFrame(
     {
         "COLTestCAT1": np.array(
             [
-                "Katze",
-                "f788b179-4eb7-4da0-addb-8e791a00ccb9",
-                "3dfbe72a-daf9-47d2-b527-4bfe2896a695",
+                "Cat",
+                "Cat",
+                "Dog",
             ]
         ),
-        "COLTestCAT2": np.array(["Hund", "Hund", "Katze"]),
-        "COLNUM": np.array([6.441824970531091, 8.05774519833058, 20]),
-        "COLNUM2": np.array([5, 12, 25]),
+        "COLTestCAT2": np.array(["Blue", "Blue", "Red"]),
+        "COLNUM": np.array([6, 8, 20]),
+        "COLNUM2": np.array([2000, 3500, 2500]),
         "timestamp": np.array(
             [
                 "2023-02-08 09:56:14.086000+00:00",
@@ -721,33 +796,33 @@ def dummy_data():
     }
 )
 
-    test_daten = pd.DataFrame(
+    test_data = pd.DataFrame(
         {
-            "COLTestCAT1": np.array(["Hund", "Hund123", "hund"]),
-            "COLTestCAT2": np.array(["K*atze", np.nan, "Hund$"]),
-            "COLNUM": np.array([6.441824970531091, 8.05774519833058, np.nan]),
-            "COLNUM2": np.array([5, 12, 25]),
+            "COLTestCAT1": np.array(["Lion", "Dog", "Dog"]),
+            "COLTestCAT2": np.array(["Yellow", "Blue", "Red"]),
+            "COLNUM": np.array([6.5, 8, 15]),
+            "COLNUM2": np.array([5, 2000, 3000]),
             "timestamp": np.array(
                 [
-                    "2023-02-08 06:58:14.017000+00:00",
+                    "2005-02-08 06:58:14.017000+00:00",
                     "2023-02-08 15:54:13.693000+00:00",
-                    np.nan,
+                    "2023-02-09 17:12:16.347000+00:00",
                 ]
             ),
         }
     )
 
 
-    anomalie_daten = pd.DataFrame(
+    anomaly_data = pd.DataFrame(
         {
-            "COLTestCAT1": np.array(["Katze", np.nan, "Hund"]),
-            "COLTestCAT2": np.array(["K*atze", np.nan, "Elefant"]),
-            "COLNUM": np.array([7.441824970531091, 8, 70]),
-            "COLNUM2": np.array([5, 100, 6]),
+            "COLTestCAT1": np.array(["Cat", np.nan, "Giraffe"]),
+            "COLTestCAT2": np.array(["Blue", np.nan, "Panda"]),
+            "COLNUM": np.array([7, 8, 70]),
+            "COLNUM2": np.array([2000, 8, 8000]),
             "timestamp": np.array(
                 [
                     "2023-02-16 06:58:14.017000+00:00",
-                    "2023-12-08 15:54:13.693000+00:00",
+                    "2002-12-08 15:54:13.693000+00:00",
                     np.nan,
                 ]
             ),
@@ -755,4 +830,4 @@ def dummy_data():
         }
     )
 
-    return train_daten, test_daten, anomalie_daten
+    return train_data, test_data, anomaly_data
