@@ -1,4 +1,4 @@
-# Automated Anomaly Detection Preprocessing Pipeline
+# Automated (Unsupervised) Anomaly Detection Preprocessing Pipeline
 ---
 
 ### I used sklearn's Pipeline and Transformer concept to create this preprocessing pipeline
