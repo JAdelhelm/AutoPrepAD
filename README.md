@@ -5,21 +5,8 @@
 - Pipeline: https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
 - Transformer: https://scikit-learn.org/stable/modules/generated/sklearn.base.TransformerMixin.html
 
-
-
-
-
-## Abstract View - Project
-![alt text](./images/project.png)
-
 ---
 
-## Decision rules of the pipeline
-![alt text](./images/decision_rules.png)
-
-
-
----
 ### How to use the pipeline
 
 ```python
@@ -61,6 +48,42 @@ X_output.head(40)
 
 - Checkout the ``how_to.ipynb`` Notebook to use this pipeline.
     - There is an  example with only train data (unsupervised)
+
+---
+
+
+## Highlights ⭐
+
+### 📌 BinaryEncoder instead of OneHotEncoder for nominal columns / *Big Data and Performance*
+   Newest research shows similar results for encoding nominal columns with significantly fewer dimensions.
+   - (John T. Hancock and Taghi M. Khoshgoftaar. "Survey on categorical data for neural networks." In: Journal of Big Data 7.1 (2020), pp. 1–41.)
+       - Tables 2, 4
+   - (Diogo Seca and João Mendes-Moreira. "Benchmark of Encoders of Nominal Features for Regression." In: World Conference on Information Systems and Technologies. 2021, pp. 146–155.)
+       - P. 151
+
+
+### 📌 Implementation of univariate methods / *Detection of univariate anomalies*
+   Both methods (MOD Z-Value and Tukey Method) are resilient against outliers, ensuring that the position measurement will not be biased. They also support multivariate anomaly detection algorithms in identifying univariate anomalies.
+
+### 📌 Transformation of time series data and standardization of data with RobustScaler / *Normalization for better prediction results*
+
+### 📌 Labeling of NaN values in an extra column instead of removing them / *No loss of information*
+
+---
+
+
+## Abstract View - Project
+![alt text](./images/project.png)
+
+---
+
+## Decision rules of the pipeline
+![alt text](./images/decision_rules.png)
+
+
+
+---
+
 
 ## Feel free to contribute 🙂
 
