@@ -34,82 +34,73 @@ from pathlib import Path
 
 class DQPipeline(PipelinesConfiguration, Experiment):
     """
-    The DQPipeline class represents the control class/main class.
-    It inherits from the Pipeline and Experiment classes.
-        -   The Pipeline class contains various pre-configured pipelines.
-        -   The Experiment class is used for the evaluation of the injected anomalies.
-
+    The DQPipeline class represents the control class/main class for managing and executing data quality pipelines.
+    It inherits from the PipelinesConfiguration and Experiment classes.
+        - The PipelinesConfiguration class contains various pre-configured pipelines.
+        - The Experiment class is used for the evaluation of the injected anomalies.
 
     Methods
-    ----------
-        - standard_pipeline_configuration:
-            - This method is used to create a generic/default pipeline which always can used if no paramters are set.
-            - It includes standard Transformation-Steps to preprocess the data.
+    -------
+    run_pipeline:
+        Executes the pipeline based on the provided data and configuration:
+        - If only training data is provided, the pipeline runs in an unsupervised mode on the training data, assigning an anomaly score using the specified anomaly detection method.
+        - If training data, test data, and anomalies are provided, the anomaly detection method is trained on the training data. Anomalies are then injected into the test data, and predictions are made on that data.
+        - If no anomalies are injected and only training and test data are provided, the anomaly detection method is trained on the training data and predicts anomalies in the test data, assigning an anomaly score.
 
-        - pipeline_configuration:
-            - This method returns the actual pipeline object to transform the data. It inherts from different methods and
-            creates the final pipeline for transformation.
-            - The steps of this method are:\n
-                1. The pre-configured pipelines are loaded from the pipeline.py class.
-                2. A standard pipeline is loaded from the `standard_pipeline_configuration` method.
-                - If nominal or ordinal columns have been defined, they are removed from the standard pipeline (self.exclude_columns).\n
-                3. A separate pipeline is created for the defined nominal or ordinal columns.
-                - This is necessary as nominal or ordinal columns can also be present in a numerical format.\n
-                - Due to this, dtype_include is set to None.\n
+    standard_pipeline_configuration:
+        Creates a generic/default pipeline that can be used if no specific parameters are set.
+        - Includes standard transformation steps to preprocess the data.
 
-        - run_pipeline:
-            - This method controls which logic the pipeline will follow.
-            - The steps of this method are:\n
-                - If no anomalies are injected and no anomaly detection method is provided:
-                    * Only the data is transformed.
-
-                - If no anomalies are injected but an anomaly detection method is provided:
-                    * Anomaly values for the test data are generated. This is for monitoring purposes.
-
-                - If anomalies are injected and an anomaly detection method is provided:
-                    * Anomaly values are generated.
-                    * The injected anomalies are evaluated. This is for experimental purposes.
+    pipeline_configuration:
+        Returns the configured pipeline object to transform the data. This method:
+        1. Loads pre-configured pipelines from the PipelinesConfiguration class.
+        2. Loads a standard pipeline from the `standard_pipeline_configuration` method.
+        - If nominal or ordinal columns are defined, they are excluded from the standard pipeline (`self.exclude_columns`).
+        3. Creates a separate pipeline for the defined nominal or ordinal columns.
+        - This is necessary as nominal or ordinal columns can be present in numerical format.
+        - The dtype_include parameter is set to None to accommodate this.
 
     Parameters
     ----------
     time_column_names : list
-        List of certain Time-Columns that should be converted in timestamp data types.
+        List of column names representing time data that should be converted to timestamp data types.
 
     nominal_columns : list
-        Columns that should be transformed to nominal.
+        Columns that should be transformed to nominal data types.
 
     ordinal_columns : list
-        Columns that should be transformed to ordinal.
+        Columns that should be transformed to ordinal data types.
 
     exclude_columns : list
-        List of Columns that should be dropped.
+        List of columns to be dropped from the dataset.
 
     pattern_recognition_exclude_columns : list
-        List of Columns that should be excluded from Pattern Recognition.
+        List of columns to be excluded from pattern recognition.
 
     remove_columns_with_no_variance : bool
-        If set to True, all columns with zero std/variance will be removed.
+        If set to True, all columns with zero standard deviation/variance will be removed.
 
     deactivate_pattern_recognition : bool
-        If set to True, the Pattern Recognition - Transformer will be deactivated.
+        If set to True, the pattern recognition transformer will be deactivated.
 
     Attributes
     ----------
-    X_train_transformed: pd.DataFrame
-        This attribute returns the transformed Train-Dataframe
+    X_train_transformed : pd.DataFrame
+        Transformed training data.
 
-    X_test_anomalies_transformed
-        This attribute returns the transformed Test-Dataframe
+    X_test_transformed : pd.DataFrame
+        Transformed test data.
 
-    X_test_anomalies_transformed
-        This attribute returns all indices of the injected anomalies
+    anomaly_indices : list
+        Indices of the injected anomalies.
 
-    feature_importances
-        This attribute returns the feature importances of the model (if possible)
+    feature_importances : list
+        Feature importances of the model (if applicable).
 
-    results_experiment
-        This attribute returns the results of the experiment
+    results_experiment : dict
+        Results of the experiment.
     """
+
 
     def __init__(
         self,
@@ -148,6 +139,72 @@ class DQPipeline(PipelinesConfiguration, Experiment):
 
         self.remove_columns_with_no_variance = remove_columns_with_no_variance
         self._pipeline_structure = self.pipeline_configuration()
+
+    def run_pipeline(
+        self,
+        X_train: pd.DataFrame,
+        X_test: pd.DataFrame = None,
+        clf: pyod.models = None,
+        dump_model: bool = False,
+        inject_anomalies: pd.DataFrame = None,
+    ) -> Pipeline:
+        """
+        Executes the pipeline based on the provided data and configuration.
+
+        Parameters
+        ----------
+        X_train : pd.DataFrame
+            The training data to be used by the pipeline.
+
+        X_test : pd.DataFrame, optional
+            The test data to be used by the pipeline. Default is None.
+
+        clf : pyod.models, optional
+            The anomaly detection model to be used by the pipeline. Default is None.
+
+        dump_model : bool, optional
+            If set to True, the trained model will be saved. Default is False.
+
+        inject_anomalies : pd.DataFrame, optional
+            DataFrame containing anomalies to be injected into the test data. Default is None.
+
+        Returns
+        -------
+        Pipeline
+            The configured and executed pipeline object.
+
+        Behavior
+        --------
+        - If only training data (X_train) is provided and a classifier (clf) is specified, the pipeline runs in unsupervised mode on the training data.
+        - If both training (X_train) and test data (X_test) are provided:
+            - If `inject_anomalies` is provided, the pipeline runs with anomaly injection in the test data.
+            - If `inject_anomalies` is not provided, the pipeline runs on the test data without injected anomalies.
+        - Any errors encountered during execution are caught and printed.
+        """
+        self.model_name = type(clf).__name__
+        try:
+            if X_test is None and clf is not None:
+                print("Running unsupervised Pipeline on train data (X_train)...")
+                return self.run_only_pipeline(X_train=X_train, clf=clf, dump_model=dump_model)
+            elif X_test is not None:
+                if isinstance(inject_anomalies, pd.DataFrame):
+                    print("Running Pipeline with injected Anomalies, train and test data (X_train, X_test, inject_anomalies)...")
+                    return self.run_pipeline_with_AD_injection(
+                        X_train=X_train,
+                        X_test=X_test,
+                        clf=clf,
+                        dump_model=dump_model,
+                        inject_anomalies=inject_anomalies,
+                        timeframe_random_state_experiment=self.timeframe_random_state_experiment,
+                    )
+                else:
+                    print("Running Pipeline without Anomalies, but with test data... (X_train, X_test)")
+                    return self.run_pipeline_with_AD_no_injection(
+                        X_train=X_train, X_test=X_test, clf=clf, dump_model=dump_model
+                    )
+        except Exception as e:
+                print("An error occurred during the execution of the pipeline.")
+                print(e)
 
     def standard_pipeline_configuration(self):
         return Pipeline(
@@ -416,36 +473,7 @@ class DQPipeline(PipelinesConfiguration, Experiment):
     def results_experiment(self):
         return super().results_experiment
 
-    def run_pipeline(
-        self,
-        X_train: pd.DataFrame,
-        X_test: pd.DataFrame = None,
-        clf: pyod.models = None,
-        dump_model: bool = False,
-        inject_anomalies: pd.DataFrame = None,
-    ) -> Pipeline:
-        self.model_name = type(clf).__name__
-        
-        if X_test is None and clf is not None:
-            print("Only X_train input will be transformed...")
-            return self.run_only_pipeline(X_train=X_train, clf=clf, dump_model=dump_model)
-        elif X_test is not None:
-            if isinstance(inject_anomalies, pd.DataFrame):
-                return self.run_pipeline_with_AD_injection(
-                    X_train=X_train,
-                    X_test=X_test,
-                    clf=clf,
-                    dump_model=dump_model,
-                    inject_anomalies=inject_anomalies,
-                    timeframe_random_state_experiment=self.timeframe_random_state_experiment,
-                )
-            else:
-                return self.run_pipeline_with_AD_no_injection(
-                    X_train=X_train, X_test=X_test, clf=clf, dump_model=dump_model
-                )
-        else:
-            print("An error occurred in your pipelines.")
-            raise Exception
+
 
     def run_only_pipeline(self, X_train: pd.DataFrame, clf, dump_model) -> Pipeline:
         """
