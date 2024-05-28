@@ -151,6 +151,13 @@ class DQPipeline(PipelinesConfiguration, Experiment):
         """
         Executes the pipeline based on the provided data and configuration.
 
+        Behavior
+        --------
+        - If only training data (X_train) is provided, the pipeline will run in unsupervised mode and returns a dataframe with anomalyscore.
+        - Else if (X_train, X_test) are provided, the pipeline will be trained on train data and predict test data.
+        - Else if (X_train, X_test, inject_anomalies) are provided, the pipeline will inject the anomalies in test data, trains the train data and predict the test data.
+
+
         Parameters
         ----------
         X_train : pd.DataFrame
@@ -173,13 +180,6 @@ class DQPipeline(PipelinesConfiguration, Experiment):
         Pipeline
             The configured and executed pipeline object.
 
-        Behavior
-        --------
-        - If only training data (X_train) is provided and a classifier (clf) is specified, the pipeline runs in unsupervised mode on the training data.
-        - If both training (X_train) and test data (X_test) are provided:
-            - If `inject_anomalies` is provided, the pipeline runs with anomaly injection in the test data.
-            - If `inject_anomalies` is not provided, the pipeline runs on the test data without injected anomalies.
-        - Any errors encountered during execution are caught and printed.
         """
         self.model_name = type(clf).__name__
         try:
