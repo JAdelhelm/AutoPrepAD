@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     # X_output.to_csv("output_testrun.csv", index=False)
 
-    # dq_pipe.visualize_pipeline_structure_html()
+    dq_pipe.visualize_pipeline_structure_html()
     # dq_pipe.get_profiling(train_data)
 
     

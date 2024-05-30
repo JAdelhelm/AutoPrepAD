@@ -9,6 +9,8 @@
 
 ### How to use the pipeline
 
+### <a href="https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/tree/main/visualization/PipelineDQ.html">Structure of Pipeline (Click)</link>
+
 ```python
 import numpy as np
 import pandas as pd
