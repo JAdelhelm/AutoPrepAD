@@ -42,6 +42,10 @@ if __name__ == "__main__":
 
     X_output.to_csv("fifa_anomalies.csv", index=False)
 
+    # Creates the html document (Pipeline-Structure) in the
+    # visualization directory
+    dq_pipe.visualize_pipeline_structure_html()
+
 
 ###############################################################################################
 #### Alternative if you have train, test data and anomalies you want to inject and evaluate ###
@@ -75,7 +79,7 @@ if __name__ == "__main__":
 
     # X_output.to_csv("output_testrun.csv", index=False)
 
-    dq_pipe.visualize_pipeline_structure_html()
+    # dq_pipe.visualize_pipeline_structure_html()
     # dq_pipe.get_profiling(train_data)
 
     
