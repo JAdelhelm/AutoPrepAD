@@ -9,7 +9,7 @@
 
 ### How to use the pipeline
 
-### <a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html">Structure of Pipeline (Click)</link>
+### <a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html">Structure of Pipeline (Click)</a>
 
 ```python
 import numpy as np
