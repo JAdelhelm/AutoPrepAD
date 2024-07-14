@@ -1,4 +1,4 @@
-# AADP - Automated Anomaly Detection Pipeline /
+# AADP - Automated Anomaly Detection Pipeline
 
 ## Example / <a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html" target="_blank">Structure of Pipeline (Click)</a>
 
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
 ---
 
-## Decision rules of the pipeline
+## Pipeline - Logic
 ![alt text](./images/decision_rules.png)
 
 
