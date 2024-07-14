@@ -34,6 +34,16 @@ if __name__ == "__main__":
 
 
 
+
+    # train, test, anomalies = dummy_data()
+
+    # X_output = anomaly_detection_pipeline.unsupervised_pipeline_train_test_anomalies(
+    #     X_train= train,
+    #     X_test=test,
+    #     inject_anomalies=anomalies,
+    #     clf=clf_lof
+    # )
+
     
 
 

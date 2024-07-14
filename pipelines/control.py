@@ -129,6 +129,9 @@ class AADP():
                                  exclude_columns = self.exclude_columns)
 
 
+
+
+
     def unsupervised_pipeline(
             self, 
             X_train: pd.DataFrame,
@@ -154,7 +157,9 @@ class AADP():
             clf = clf,
             dump_model = dump_model
         )
-    
+
+
+
     def unsupervised_pipeline_train_test(
         self, 
         X_train: pd.DataFrame,
@@ -183,6 +188,8 @@ class AADP():
                     )
 
 
+
+
     def unsupervised_pipeline_train_test_anomalies(
         self, 
         X_train: pd.DataFrame,
@@ -205,9 +212,6 @@ class AADP():
         """
         self.model_name = type(clf).__name__
 
-        # self.X_train_prep = self.remove_no_variance_columns(self.X_train_prep, remove_no_variance = self.exclude_columns_no_variance)
-        # self.X_test_prep = self.remove_no_variance_columns(self.X_test_prep, remove_no_variance = self.exclude_columns_no_variance)
-
         print("Running Pipeline with injected Anomalies, train and test data (X_train, X_test, inject_anomalies)...")
         return self.runs.unsupervised_train_test_anomalies_run(
             X_train=X_train,
@@ -216,6 +220,8 @@ class AADP():
             inject_anomalies=inject_anomalies,
             timeframe_random_state_experiment=timeframe_random_state_experiment
         )
+
+
 
     def visualize_pipeline_structure_html(self, filename="./visualization/PipelineDQ"):
         """

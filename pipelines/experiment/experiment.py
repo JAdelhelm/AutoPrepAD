@@ -493,13 +493,13 @@ Please consider to check you experiment class and your naming of statistical col
         }
         results_df = pd.DataFrame(results)
         from pathlib import Path
-        Path("./ERGEBNISSE").mkdir(parents=True, exist_ok=True)
+        Path("./RESULTS").mkdir(parents=True, exist_ok=True)
         if mode_pandas == "a":
-            results_df.to_csv(f"./ERGEBNISSE/{model_name}_{self.timeframe_random_state_experiment}_injected.csv", index=False, mode=mode_pandas, header=False)
+            results_df.to_csv(f"./RESULTS/{model_name}_{self.timeframe_random_state_experiment}_injected.csv", index=False, mode=mode_pandas, header=False)
         else:
-            results_df.to_csv(f"./ERGEBNISSE/{model_name}_{self.timeframe_random_state_experiment}_injected.csv", index=False, mode=mode_pandas)
+            results_df.to_csv(f"./RESULTS/{model_name}_{self.timeframe_random_state_experiment}_injected.csv", index=False, mode=mode_pandas)
 
-        self._results_metrics = pd.read_csv(f"./ERGEBNISSE/{model_name}_{self.timeframe_random_state_experiment}_injected.csv")
+        self._results_metrics = pd.read_csv(f"./RESULTS/{model_name}_{self.timeframe_random_state_experiment}_injected.csv")
 
     def save_metrics_pr_curve_no_statistical_methods(self, y_pred_array: list = [], threshold: int = None, X_test_anomalies_transformed: pd.DataFrame() = None, clf_fitted: pyod.models = None, mode_pandas: str="a"):
         """
@@ -532,11 +532,11 @@ Please consider to check you experiment class and your naming of statistical col
     }
         results_df = pd.DataFrame(results)
         from pathlib import Path
-        Path(f"./ERGEBNISSE/PR_CURVE_{model_name}").mkdir(parents=True, exist_ok=True)
+        Path(f"./RESULTS/PR_CURVE_{model_name}").mkdir(parents=True, exist_ok=True)
         if mode_pandas == "a":
-            results_df.to_csv(f"./ERGEBNISSE/PR_CURVE_{model_name}/thresholds_{model_name}_{self.timeframe_random_state_experiment}_injected.csv", index=False, mode=mode_pandas, header=False)
+            results_df.to_csv(f"./RESULTS/PR_CURVE_{model_name}/thresholds_{model_name}_{self.timeframe_random_state_experiment}_injected.csv", index=False, mode=mode_pandas, header=False)
         else:
-            results_df.to_csv(f"./ERGEBNISSE/PR_CURVE_{model_name}/thresholds_{model_name}_{self.timeframe_random_state_experiment}_injected.csv", index=False, mode=mode_pandas)
+            results_df.to_csv(f"./RESULTS/PR_CURVE_{model_name}/thresholds_{model_name}_{self.timeframe_random_state_experiment}_injected.csv", index=False, mode=mode_pandas)
 
 
     def check_variance(
