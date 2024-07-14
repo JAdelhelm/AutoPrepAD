@@ -1,15 +1,7 @@
-# AADP - Automated Anomaly Detection Pipeline
----
+# AADP - Automated Anomaly Detection Pipeline /
 
-### I used sklearn's Pipeline and Transformer concept to create this preprocessing pipeline
-- Pipeline: https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
-- Transformer: https://scikit-learn.org/stable/modules/generated/sklearn.base.TransformerMixin.html
+## Example / <a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html" target="_blank">Structure of Pipeline (Click)</a>
 
----
-
-## How to use the pipeline
-
-### <a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html" target="_blank">Structure of Pipeline (Click)</a>
 
 ```python
 import numpy as np
@@ -44,7 +36,7 @@ if __name__ == "__main__":
 
     anomaly_detection_pipeline.visualize_pipeline_structure_html()
 ```
-## **Example**
+#### **Output**
 ![alt text](./images/example.png)
 
 ---
@@ -82,6 +74,9 @@ if __name__ == "__main__":
 
 ---
 
+### I used sklearn's Pipeline and Transformer concept to create this preprocessing pipeline
+- Pipeline: https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
+- Transformer: https://scikit-learn.org/stable/modules/generated/sklearn.base.TransformerMixin.html
 
 ## Feel free to contribute 🙂
 
