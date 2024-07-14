@@ -107,6 +107,13 @@ class AADP():
 
         self.model_name = ""
 
+        if self.time_column_names is not None:
+            if self.exclude_columns is None:
+                self.exclude_columns = []
+            self.exclude_columns = self.exclude_columns + self.time_column_names
+
+
+
 
         self.X_train_transformed = None
         self.X_test_transformed = None
