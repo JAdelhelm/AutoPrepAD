@@ -1,4 +1,4 @@
-# Automated (Unsupervised) Anomaly Detection Preprocessing Pipeline
+# AADP - Automated Anomaly Detection Pipeline
 ---
 
 ### I used sklearn's Pipeline and Transformer concept to create this preprocessing pipeline

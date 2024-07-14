@@ -40,9 +40,6 @@ set_config(transform_output="pandas")
 class AADP():
     """
     The AADP (Automated Anomaly Detection Pipeline) class represents the control class/main class for managing and executing configurated pipelines.
-    It inherits from the PipelinesConfiguration and Experiment classes.
-    - The PipelinesConfiguration class contains various pre-configured pipelines.
-    - The Experiment class is used for the evaluation of the injected anomalies.
 
     Parameters
     ----------
