@@ -1,4 +1,8 @@
 # AADP - Automated Anomaly Detection Pipeline
+
+## Abstract View - Project
+![alt text](./images/project.png)
+
 ## Example / <a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html" target="_blank">Structure of Pipeline (Click)</a>
 
 
@@ -61,8 +65,6 @@ if __name__ == "__main__":
 ---
 
 
-## Abstract View - Project
-![alt text](./images/project.png)
 
 ---
 
