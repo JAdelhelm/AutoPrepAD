@@ -1,5 +1,4 @@
 # AADP - Automated Anomaly Detection Pipeline
-![alt text](./images/banner.png)
 ## Example / <a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html" target="_blank">Structure of Pipeline (Click)</a>
 
 
