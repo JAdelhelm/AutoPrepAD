@@ -21,10 +21,12 @@ class PipelineRuns(Experiment):
     def __init__(self,
                  PipelineStructure: object,
                  remove_columns_with_no_variance = False,
-                 exclude_columns = None) -> None:
+                 exclude_columns = None,
+                 mark_anomalies_pct_data=0.1) -> None:
         self.PipelineStructure = PipelineStructure
         self.remove_columns_with_no_variance = remove_columns_with_no_variance
         self.exclude_columns = exclude_columns
+        self.mark_anomalies_pct_data = mark_anomalies_pct_data
 
         self.X_train_prep = None
         self.X_test_prep = None
@@ -106,11 +108,19 @@ class PipelineRuns(Experiment):
             first_column = X_train.pop("AnomalyScore")
             X_train.insert(0, "AnomalyScore", first_column)
 
+            threshold_AD = np.percentile(first_column, 100 * (1 - self.mark_anomalies_pct_data))
+            y_pred_array = (first_column > threshold_AD).astype(int)
+
+            X_train["AnomalyLabel"] = y_pred_array
+
             
             self._X_train = X_train
 
             return X_train
         except Exception as e:
+            threshold_AD = np.percentile(first_column, 100 * (1 - self.mark_anomalies_pct_data))
+            y_pred_array = (first_column > threshold_AD).astype(int)
+            X_train["AnomalyLabel"] = y_pred_array
             return X_train.sort_values("AnomalyScore", ascending=False)
 
 
@@ -182,6 +192,11 @@ class PipelineRuns(Experiment):
 
             first_column = X_test.pop("AnomalyScore")
             X_test.insert(0, "AnomalyScore", first_column)
+
+            threshold_AD = np.percentile(first_column, 100 * (1 - self.mark_anomalies_pct_data))
+            y_pred_array = (first_column > threshold_AD).astype(int)
+
+            X_test["AnomalyLabel"] = y_pred_array
 
             self._X_test = X_test
 

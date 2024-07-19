@@ -90,7 +90,8 @@ class AADP():
         exclude_columns: list = None,
         pattern_recognition_exclude_columns: list = None,
         exclude_columns_no_variance: bool = False,
-        deactivate_pattern_recognition: bool = False):
+        deactivate_pattern_recognition: bool = False,
+        mark_anomalies_pct_data: float = 0.1):
         #super().__init__()
         self.X_test_output_injected = None
         self.time_column_names = time_column_names
@@ -99,6 +100,7 @@ class AADP():
         self.exclude_columns = exclude_columns
         self.pattern_recognition_exclude_columns = pattern_recognition_exclude_columns
         self.deactivate_pattern_recognition = deactivate_pattern_recognition
+        self.mark_anomalies_pct_data = mark_anomalies_pct_data
 
         self.exclude_columns_no_variance = exclude_columns_no_variance
 
@@ -126,7 +128,8 @@ class AADP():
 
         self.runs = PipelineRuns(self.pipeline_structure,
                                  remove_columns_with_no_variance = self.exclude_columns_no_variance,
-                                 exclude_columns = self.exclude_columns)
+                                 exclude_columns = self.exclude_columns,
+                                 mark_anomalies_pct_data=self.mark_anomalies_pct_data)
 
 
 
