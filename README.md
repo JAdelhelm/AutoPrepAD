@@ -19,7 +19,8 @@ from pyod.models.pca import PCA
 
 
 if __name__ == "__main__":
-    df_data = pd.read_csv("./temperature_US.csv")
+    df_data = pd.read_csv("./temperature_USA.csv")
+
 
 
     # clf_if = IForest(n_jobs=-1)
