@@ -42,7 +42,7 @@ if __name__ == "__main__":
 #### **Output**
 ![alt text](./images/example.png)
 
-Data: https://www.kaggle.com/datasets/sudalairajkumar/daily-temperature-of-major-cities
+#### Data: https://www.kaggle.com/datasets/sudalairajkumar/daily-temperature-of-major-cities
 ---
 
 
