@@ -12,7 +12,7 @@ from pyod.models.lof import LOF
 
 
 if __name__ == "__main__":
-    df_data = pd.read_csv("./players_20.csv")
+    df_data = pd.read_csv("./FIFA23_official_data.csv")
 
     clf_lof = LOF(n_jobs=-1)
 
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     )
 
     X_output = anomaly_detection_pipeline.unsupervised_pipeline(
-        X_train=df_data.iloc[:,0:37],
+        X_train=df_data,
         clf=clf_lof,
         dump_model=False,
     )

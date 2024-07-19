@@ -104,7 +104,7 @@ class ConfigurationControl(PipelinesConfiguration):
             return Pipeline(
                 steps=[
                     (
-                        "Data Quality - Pipeline",
+                        "Automated Anomaly Detection Pipeline",
                         ColumnTransformer(
                             transformers=[
                                 (
@@ -146,7 +146,7 @@ class ConfigurationControl(PipelinesConfiguration):
             return Pipeline(
                 steps=[
                     (
-                        "Data Quality - Pipeline",
+                        "Automated Anomaly Detection Pipeline",
                         ColumnTransformer(
                             transformers=[
                                 (
@@ -202,7 +202,7 @@ class ConfigurationControl(PipelinesConfiguration):
             return Pipeline(
                 steps=[
                     (
-                        "Data Quality - Pipeline",
+                        "Automated Anomaly Detection Pipeline",
                         ColumnTransformer(
                             transformers=[
                                 (
@@ -218,11 +218,11 @@ class ConfigurationControl(PipelinesConfiguration):
                                     make_column_selector(dtype_include=None),
                                 ),
                                 # ("Ordinal Columns",super().ordinal_pipeline(ordinal_columns=self.ordinal_columns),make_column_selector(dtype_include=None)),
-                                (
-                                    "NaNMarker Pipeline",
-                                    super().nan_marker_pipeline(),
-                                    make_column_selector(dtype_include=None),
-                                ),
+                                # (
+                                #     "NaNMarker Pipeline",
+                                #     super().nan_marker_pipeline(),
+                                #     make_column_selector(dtype_include=None),
+                                # ),
                                 (
                                     "Categorical_PatternExtraction",
                                     super().pattern_extraction(
@@ -252,7 +252,7 @@ class ConfigurationControl(PipelinesConfiguration):
             return Pipeline(
                 steps=[
                     (
-                        "Data Quality - Pipeline",
+                        "Automated Anomaly Detection Pipeline",
                         ColumnTransformer(
                             transformers=[
                                 (

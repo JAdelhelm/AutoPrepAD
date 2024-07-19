@@ -63,6 +63,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 import warnings
 
+from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
+
 
 
 import itertools
@@ -227,7 +229,13 @@ class PipelinesConfiguration():
                                 "numeric",
                                 Pipeline(
                                     steps=[
-                                        ("N", IterativeImputer()),
+                                        # ("N", IterativeImputer(add_indicator=True,  estimator=HistGradientBoostingRegressor())),
+                                        # ("N", IterativeImputer(add_indicator=True,  estimator=RandomForestRegressor())),
+
+                                                                                (
+                                            "N",
+                                            SimpleImputer(strategy="median"),
+                                        ),
                                         (
                                             "robust_scaler",
                                             RobustScaler(),
@@ -388,7 +396,7 @@ class PipelinesConfiguration():
         time_column_names_pattern: list = None,
         deactivate_pattern_recognition: bool = False,
     ):
-        if deactivate_pattern_recognition == True:
+        if deactivate_pattern_recognition is True:
             return    Pipeline(
             steps=[
                 (
