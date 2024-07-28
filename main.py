@@ -26,11 +26,14 @@ if __name__ == "__main__":
         mark_anomalies_pct_data=0.005
     )
 
-    X_output = anomaly_detection_pipeline.unsupervised_pipeline(
+    anomaly_detection_pipeline.fit(
         X_train=df_data,
         clf=clf_pca,
         dump_model=False,
     )
+    
+    X_output = anomaly_detection_pipeline.predict(X_test=df_data)
+
 
     X_output.to_csv("temperatures_anomalies.csv", index=False)
 
@@ -38,16 +41,6 @@ if __name__ == "__main__":
 
 
 
-
-
-    # train, test, anomalies = dummy_data()
-
-    # X_output = anomaly_detection_pipeline.unsupervised_pipeline_train_test_anomalies(
-    #     X_train= train,
-    #     X_test=test,
-    #     inject_anomalies=anomalies,
-    #     clf=clf_lof
-    # )
 
     
 

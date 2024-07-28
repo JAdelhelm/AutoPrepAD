@@ -132,98 +132,29 @@ class AADP():
                                  mark_anomalies_pct_data=self.mark_anomalies_pct_data)
 
 
-
-
-
-    def unsupervised_pipeline(
+    def fit(
             self, 
             X_train: pd.DataFrame,
             clf: pyod.models = None,
             dump_model: bool = False,
     ) -> Pipeline:
-        """
-        Runs the pipeline unsuperivsed on input data.
-
-        Behavior
-        --------
-        1. Transforms input data, based on the pipeline configuration.
-        2. Anomaly detection will be executed to find anomalies.
-        3. Insertion of extra column (Anomaly score).
-        4. Attach column to original dataset.
-        """
-        self.model_name = type(clf).__name__
-
-
-        print("Running unsupervised Pipeline on input data (X_train)...")
-        return self.runs.unsupervised_run(
-            X_train = X_train, 
-            clf = clf,
-            dump_model = dump_model
-        )
-
-
-
-    def unsupervised_pipeline_train_test(
-        self, 
-        X_train: pd.DataFrame,
-        X_test: pd.DataFrame,
-        clf: pyod.models = None,
-        dump_model: bool = False,
-    ) -> Pipeline:
-        """
-        Runs the pipeline with the usage of train and test-data.
-
-        Behavior
-        --------
-        1. Transforms train and test data, based on the pipeline configuration.
-        2. Anomaly detection will learn the structure of the train data.
-        3. Anomaly detection will predict anomalies in test data.
-        3. Insertion of extra column (Anomaly score).
-        4.  Attach column to original dataset. 
-        """
-        self.model_name = type(clf).__name__
-
-
-
-        print("Running Pipeline on train and test data... (X_train, X_test)")
-        return self.runs.unsupervised_train_test_run(
-                        X_train=X_train, X_test=X_test, clf=clf, dump_model=dump_model
-                    )
-
-
-
-
-    def unsupervised_pipeline_train_test_anomalies(
-        self, 
-        X_train: pd.DataFrame,
-        X_test: pd.DataFrame,
-        clf: pyod.models = None,
-        inject_anomalies: pd.DataFrame = None,
-        timeframe_random_state_experiment = "42"
-    ) -> Pipeline:
-        """
-        Runs the pipeline with the usage of train, test-data and injected anomalies.
-
-        Behavior
-        --------
-        1. Injects anomalies in test data + marks them.
-        2. Transforms train and test data, based on the pipeline configuration.
-        3. Anomaly detection will learn the structure of the train data.
-        4. Anomaly detection will predict anomalies in test data.
-        5. Insertion of extra column (Anomaly score).
-        6.  Attach column to original dataset. 
-        """
-        self.model_name = type(clf).__name__
-
-        print("Running Pipeline with injected Anomalies, train and test data (X_train, X_test, inject_anomalies)...")
-        return self.runs.unsupervised_train_test_anomalies_run(
+        
+        return self.runs.fit_pipeline(
             X_train=X_train,
-            X_test=X_test,
             clf=clf,
-            inject_anomalies=inject_anomalies,
-            timeframe_random_state_experiment=timeframe_random_state_experiment
+            dump_model=dump_model
         )
+    
 
+    def predict(
+            self,
+            X_test: pd.DataFrame
+    ) -> pd.DataFrame:
+        
+        return self.runs.predict_pipeline(
+            X_test=X_test
+        )
+        
 
 
     def visualize_pipeline_structure_html(self, filename="./visualization/PipelineDQ"):
@@ -241,4 +172,3 @@ class AADP():
 
 
     
-

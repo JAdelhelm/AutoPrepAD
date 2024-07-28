@@ -21,9 +21,6 @@ from pyod.models.pca import PCA
 if __name__ == "__main__":
     df_data = pd.read_csv("./temperature_USA.csv")
 
-
-
-    # clf_if = IForest(n_jobs=-1)
     clf_pca = PCA()
 
     anomaly_detection_pipeline = AADP(
@@ -32,13 +29,16 @@ if __name__ == "__main__":
         mark_anomalies_pct_data=0.005
     )
 
-    X_output = anomaly_detection_pipeline.unsupervised_pipeline(
+    anomaly_detection_pipeline.fit(
         X_train=df_data,
         clf=clf_pca,
         dump_model=False,
     )
-
+    
+    X_output = anomaly_detection_pipeline.predict(X_test=df_data)
     X_output.to_csv("temperatures_anomalies.csv", index=False)
+
+    # anomaly_detection_pipeline.visualize_pipeline_structure_html()
 ```
 #### **Output**
 ![alt text](./images/example.png)

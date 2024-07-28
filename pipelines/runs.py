@@ -28,15 +28,24 @@ class PipelineRuns(Experiment):
         self.exclude_columns = exclude_columns
         self.mark_anomalies_pct_data = mark_anomalies_pct_data
 
-        self.X_train_prep = None
-        self.X_test_prep = None
+
+
+
+        self.fitted_model = None
+        self.fitted_pipeline = None
 
 
         self._X_train = None
         self._X_test = None
 
+        self.X_train_prep = None
+        self.X_test_prep = None
+
         self._X_train_transformed = None
         self._X_test_transformed = None
+
+        self.X_train_transformed_model = None
+        self.X_test_transformed_model = None
 
         self.no_variance_columns = None
 
@@ -57,138 +66,98 @@ class PipelineRuns(Experiment):
         return self._X_test
     
 
+    def fit_pipeline(
+            self, 
+            X_train: pd.DataFrame,
+            clf: pyod.models = None,
+            dump_model: bool = False,
+    ):
+        """
+        Fitting of Pipeline and anomaly detection algorithm.
 
-    def unsupervised_run(self, X_train: pd.DataFrame, clf, dump_model) -> Pipeline:
-        print("Running only Input-Data-Pipeline...")
+            1. Remove Columns that should be excluded.
+            2. Remove Columns with no variance.
+                --> Before checking variance, data has to be transformed to numeric
+            3. Fit Pipeline based on input data (train data).
+            4. Fit Anomaly Detection algorithm with transformed input data.
+
+
+        """    
+
+        print("Fitting Pipeline and train anomaly detection model...")
         self.X_train_prep = self.remove_excluded_columns(X_train)
 
         try:
-            X_train_transformed = self.PipelineStructure.fit_transform(self.X_train_prep)
+            self.fitted_pipeline = self.PipelineStructure.fit(self.X_train_prep)
         except Exception as e:
             print(self.X_train_prep.isna().sum(),"\n",e,"\n")
             raise
 
+        self.X_train_transformed_model = self.fitted_pipeline.transform(self.X_train_prep)
 
-        X_train_transformed = self.remove_no_variance_columns(
-            X_train=X_train_transformed,
+        self.X_train_transformed_model = self.remove_no_variance_columns(
+            X_train=self.X_train_transformed_model,
             remove_no_variance=self.remove_columns_with_no_variance,
         )
 
-        self._X_train_transformed = X_train_transformed
 
-        clf_no_injection = clf
-        clf_no_injection.fit(X_train_transformed)
+
+        self.fitted_model = clf.fit(self.X_train_transformed_model)
 
         if dump_model == True:
             try:
-                dump(clf, f"clf_{type(clf).__name__}.joblib")
+                dump(self.fitted_model, f"clf_{type(self.fitted_model).__name__}.joblib")
             except:
                 print("Could not dump the model.")
 
-        y_pred_decision_score = clf_no_injection.decision_function(X_train_transformed)
-        X_train["AnomalyScore"] = y_pred_decision_score
-        scaler = MinMaxScaler()
-        X_train[["AnomalyScore"]] = scaler.fit_transform(X_train[["AnomalyScore"]])
-
-        try:
-            column_name_mad_total = [
-                col for col in X_train_transformed.columns if col.endswith("MAD_Total")
-            ][0]
-            X_train["MAD_Total"] = X_train_transformed[column_name_mad_total]
-            column_name_tukey_total = [
-                col for col in X_train_transformed.columns if col.endswith("Tukey_Total")
-            ][0]
-            X_train["Tukey_Total"] = X_train_transformed[column_name_tukey_total]
-
-            X_train = X_train.sort_values(
-                ["AnomalyScore", "MAD_Total", "Tukey_Total"], ascending=False
-            )
-
-
-            first_column = X_train.pop("AnomalyScore")
-            X_train.insert(0, "AnomalyScore", first_column)
-
-            threshold_AD = np.percentile(first_column, 100 * (1 - self.mark_anomalies_pct_data))
-            y_pred_array = (first_column > threshold_AD).astype(int)
-
-            X_train["AnomalyLabel"] = y_pred_array
-
-            
-            self._X_train = X_train
-
-            return X_train
-        except Exception as e:
-            threshold_AD = np.percentile(first_column, 100 * (1 - self.mark_anomalies_pct_data))
-            y_pred_array = (first_column > threshold_AD).astype(int)
-            X_train["AnomalyLabel"] = y_pred_array
-            return X_train.sort_values("AnomalyScore", ascending=False)
 
 
 
-    def unsupervised_train_test_run(
-        self,
-        X_train: pd.DataFrame,
-        X_test: pd.DataFrame,
-        clf: pyod.models,
-        dump_model: bool,
+        
+
+    def predict_pipeline(
+            self,
+            X_test: pd.DataFrame
     ):
-        print("Running Pipeline without injected Anomalies...")
         """
-        Processes the data through the pipeline and returns the test dataset with corresponding anomaly values.
-        
-        Purpose:
-        - Used for monitoring purposes.
-        
-        Optional:
-        - The model can be temporarily stored using the `dump_model` parameter.
+        Transformation, based on fitted Pipeline + Prediction.
+
+            1. Remove Columns that should be excluded.
+            2. Remove Columns with no variance.
+            3. Predict Anomalies on transformed input data (test data)
         """
-        self.X_train_prep = self.remove_excluded_columns(X_train)
+        print("Prediction of Anomalies, based on fitted Pipeline...")
         self.X_test_prep = self.remove_excluded_columns(X_test)
 
-        self.PipelineStructure.fit(self.X_train_prep)
 
-        X_train_transformed = self.PipelineStructure.transform(self.X_train_prep)
+        self.X_test_transformed_model = self.fitted_pipeline.transform(self.X_test_prep)
 
-        X_test_transformed = self.PipelineStructure.transform(self.X_test_prep)
-
-        X_train_transformed, X_test_transformed = self.remove_no_variance_columns(
-            X_train=X_train_transformed,
-            X_test=X_test_transformed,
+        self.X_test_transformed_model = self.remove_no_variance_columns(
+            X_train=self.X_test_transformed_model,
             remove_no_variance=self.remove_columns_with_no_variance,
         )
 
 
 
-        self._X_train_transformed = X_train_transformed
-        self._X_test_transformed = X_test_transformed
-
-        clf_no_injection = clf
-        clf_no_injection.fit(X_train_transformed)
-
-        if dump_model == True:
-            try:
-                dump(clf, f"clf_{type(clf).__name__}.joblib")
-            except:
-                print("Could not dump the model.")
-
-        y_pred_decision_score = clf_no_injection.decision_function(X_test_transformed)
+        y_pred_decision_score = self.fitted_model.decision_function(self.X_test_transformed_model)
         X_test["AnomalyScore"] = y_pred_decision_score
         scaler = MinMaxScaler()
         X_test[["AnomalyScore"]] = scaler.fit_transform(X_test[["AnomalyScore"]])
 
         try:
             column_name_mad_total = [
-                col for col in X_test_transformed.columns if col.endswith("MAD_Total")
+                col for col in self.X_test_transformed_model.columns if col.endswith("MAD_Total")
             ][0]
-            X_test["MAD_Total"] = X_test_transformed[column_name_mad_total]
+            X_test["MAD_Total"] = self.X_test_transformed_model[column_name_mad_total]
             column_name_tukey_total = [
-                col for col in X_test_transformed.columns if col.endswith("Tukey_Total")
+                col for col in self.X_test_transformed_model.columns if col.endswith("Tukey_Total")
             ][0]
-            X_test["Tukey_Total"] = X_test_transformed[column_name_tukey_total]
+            X_test["Tukey_Total"] = self.X_test_transformed_model[column_name_tukey_total]
 
             X_test = X_test.sort_values(
                 ["AnomalyScore", "MAD_Total", "Tukey_Total"], ascending=False
             )
+
 
             first_column = X_test.pop("AnomalyScore")
             X_test.insert(0, "AnomalyScore", first_column)
@@ -198,51 +167,16 @@ class PipelineRuns(Experiment):
 
             X_test["AnomalyLabel"] = y_pred_array
 
-            self._X_test = X_test
+            
+            self._X_train = X_test
 
             return X_test
         except Exception as e:
+            threshold_AD = np.percentile(first_column, 100 * (1 - self.mark_anomalies_pct_data))
+            y_pred_array = (first_column > threshold_AD).astype(int)
+            X_test["AnomalyLabel"] = y_pred_array
             return X_test.sort_values("AnomalyScore", ascending=False)
 
-
-
-
-    def unsupervised_train_test_anomalies_run(
-        self,
-        X_train: pd.DataFrame,
-        X_test: pd.DataFrame,
-        clf: pyod.models,
-        inject_anomalies: pd.DataFrame,
-        timeframe_random_state_experiment: str,
-    ) -> pd.DataFrame:
-        """
-        Method to conduct the experiment.
-
-        Steps:
-            1. Reassignment of the index for injected anomaly values (end of the test data).
-            2. Merging of the test data with the injected anomalies (without their y_true label).
-            3. Resetting the index for the test and training data to avoid having two index columns.
-            4. Data is processed through the pipeline (structure provided in the method).
-            5. Evaluation of the injected anomalies and extraction of quality metrics.
-        """
-        print("Running Pipeline with injected Anomalies...")
-        # self.X_train_prep = self.remove_excluded_columns(X_train)
-        # self.X_test_prep = self.remove_excluded_columns(X_test)
-
-        if isinstance(inject_anomalies, pd.DataFrame):
-            self.X_test_output_injected = super().start_experiment(
-                X_train=X_train,
-                X_test=X_test,
-                injected_anomalies=inject_anomalies,
-                pipeline_structure=self.PipelineStructure,
-                clf=clf,
-                remove_columns_with_no_variance=self.remove_columns_with_no_variance,
-                timeframe_random_state_experiment=timeframe_random_state_experiment,
-            )
-            # self.feature_importances = super().get_feature_importances()
-            return self.X_test_output_injected
-        else:
-            print("Invalid Injection of Anomalies.")
 
 
 
@@ -368,8 +302,5 @@ class PipelineRuns(Experiment):
                 return X_train_dropped, X_test_dropped
             else:
                 return X_train, X_test
-
-
-
 
 
