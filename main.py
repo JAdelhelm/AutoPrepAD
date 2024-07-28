@@ -17,6 +17,7 @@ if __name__ == "__main__":
 
     # clf_if = IForest(n_jobs=-1)
     clf_pca = PCA()
+    # clf_ae = initialize_autoencoder_modified()
 
     anomaly_detection_pipeline = AADP(
         exclude_columns=[],

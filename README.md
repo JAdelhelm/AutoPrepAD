@@ -67,9 +67,6 @@ if __name__ == "__main__":
 
 ### 📌 Labeling of NaN values in an extra column instead of removing them / *No loss of information*
 
----
-
-
 
 ---
 
@@ -80,11 +77,15 @@ if __name__ == "__main__":
 
 ---
 
-### I used sklearn's Pipeline and Transformer concept to create this preprocessing pipeline
-- Pipeline: https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
-- Transformer: https://scikit-learn.org/stable/modules/generated/sklearn.base.TransformerMixin.html
-
 ## Feel free to contribute 🙂
 
 ### Reference
 - https://www.researchgate.net/publication/379640146_Detektion_von_Anomalien_in_der_Datenqualitatskontrolle_mittels_unuberwachter_Ansatze (German Thesis)
+
+### Further Information
+- Pipeline can also be used to add extra columns (feature engineering)
+    - Adds AnomalyLabel to rows
+    - Marks univariate outliers
+- I used sklearn's Pipeline and Transformer concept to create this preprocessing pipeline
+    - Pipeline: https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
+    - Transformer: https://scikit-learn.org/stable/modules/generated/sklearn.base.TransformerMixin.html
