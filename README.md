@@ -1,7 +1,22 @@
 # UAADP - Unsupervised Automated Anomaly Detection Pipeline
 <a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html" target="_blank">Structure of Pipeline (Click)</a>
+
+
+
+This pipeline is designed for unsupervised applications where labels are not available. It can be utilized in various fields, for example:
+
+- **Cybersecurity**: Detect potential cyber attacks.
+- **Data Quality**: Identify broken or inconsistent data.
+- **Marketing**: Discover customers with high revenue and margins.
+- **Finance**: Spot unusual transactions that may indicate fraud.
+- **Energy**: Identify anomalies in energy consumption patterns that could indicate inefficiencies or issues with the power grid.
+
+
+
 ## Abstract View - Project
 ![alt text](./images/project.png)
+
+
 
 ## Example 
 
