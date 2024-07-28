@@ -1,4 +1,4 @@
-# AADP - Automated Anomaly Detection Pipeline (Unsupervised)
+# UAADP - Unsupervised Automated Anomaly Detection Pipeline
 <a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html" target="_blank">Structure of Pipeline (Click)</a>
 ## Abstract View - Project
 ![alt text](./images/project.png)
@@ -10,10 +10,12 @@
 import numpy as np
 import pandas as pd
 
-from pipelines.control import AADP
+from pipelines.control import UAADP
 from pipelines.defaults import initialize_autoencoder, initialize_autoencoder_modified
 from pipelines.defaults import dummy_data
 pd.set_option("display.max_columns", None)
+# from pyod.models.iforest import IForest
+# from pyod.models.lof import LOF
 from pyod.models.pca import PCA
 
 
@@ -23,7 +25,7 @@ if __name__ == "__main__":
 
     clf_pca = PCA()
 
-    anomaly_detection_pipeline = AADP(
+    anomaly_detection_pipeline = UAADP(
         exclude_columns=[],
         deactivate_pattern_recognition=True,
         exclude_columns_no_variance=True,
@@ -40,6 +42,7 @@ if __name__ == "__main__":
 
 
     X_output.to_csv("temperatures_anomalies.csv", index=False)
+
     # anomaly_detection_pipeline.visualize_pipeline_structure_html()
 
 ```

@@ -37,7 +37,7 @@ except: from configuration_control import ConfigurationControl
 
 set_config(transform_output="pandas")
 
-class AADP():
+class UAADP():
     """
     The AADP (Automated Anomaly Detection Pipeline) class represents the control class/main class for managing and executing configurated pipelines.
 

@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from pipelines.control import AADP
+from pipelines.control import UAADP
 from pipelines.defaults import initialize_autoencoder, initialize_autoencoder_modified
 from pipelines.defaults import dummy_data
 pd.set_option("display.max_columns", None)
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     clf_pca = PCA()
     # clf_ae = initialize_autoencoder_modified()
 
-    anomaly_detection_pipeline = AADP(
+    anomaly_detection_pipeline = UAADP(
         exclude_columns=[],
         deactivate_pattern_recognition=True,
         exclude_columns_no_variance=True,
