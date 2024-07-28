@@ -24,9 +24,10 @@ if __name__ == "__main__":
     clf_pca = PCA()
 
     anomaly_detection_pipeline = AADP(
+        exclude_columns=[],
         deactivate_pattern_recognition=True,
         exclude_columns_no_variance=True,
-        mark_anomalies_pct_data=0.005
+        mark_anomalies_pct_data=0.01
     )
 
     anomaly_detection_pipeline.fit(
@@ -36,9 +37,11 @@ if __name__ == "__main__":
     )
     
     X_output = anomaly_detection_pipeline.predict(X_test=df_data)
-    X_output.to_csv("temperatures_anomalies.csv", index=False)
 
+
+    X_output.to_csv("temperatures_anomalies.csv", index=False)
     # anomaly_detection_pipeline.visualize_pipeline_structure_html()
+
 ```
 #### **Output**
 ![alt text](./images/example.png)

@@ -15,15 +15,14 @@ from pyod.models.pca import PCA
 if __name__ == "__main__":
     df_data = pd.read_csv("./temperature_USA.csv")
 
-
-
     # clf_if = IForest(n_jobs=-1)
     clf_pca = PCA()
 
     anomaly_detection_pipeline = AADP(
+        exclude_columns=[],
         deactivate_pattern_recognition=True,
         exclude_columns_no_variance=True,
-        mark_anomalies_pct_data=0.005
+        mark_anomalies_pct_data=0.01
     )
 
     anomaly_detection_pipeline.fit(
@@ -43,11 +42,6 @@ if __name__ == "__main__":
 
 
     
-
-
-
-
-
 
 
 # %%
