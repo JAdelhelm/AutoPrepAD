@@ -1,4 +1,4 @@
-# AADP - Automated Anomaly Detection Pipeline
+# AADP - Automated Anomaly Detection Pipeline (Unsupervised)
 <a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html" target="_blank">Structure of Pipeline (Click)</a>
 ## Abstract View - Project
 ![alt text](./images/project.png)
