@@ -18,7 +18,7 @@ This pipeline is designed for unsupervised applications where labels are not ava
 
 
 
-## Example 
+## Usage 
 
 
 ```python
