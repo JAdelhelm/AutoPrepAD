@@ -61,8 +61,7 @@ if __name__ == "__main__":
     # anomaly_detection_pipeline.visualize_pipeline_structure_html()
 
 ```
-#### **Output**
-![alt text](./images/example.png)
+
 
 #### Data: https://www.kaggle.com/datasets/sudalairajkumar/daily-temperature-of-major-cities
 ---
