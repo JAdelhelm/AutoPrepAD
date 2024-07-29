@@ -1,18 +1,6 @@
 # UAADP - Unsupervised Automated Anomaly Detection Pipeline
 <a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html" target="_blank">Structure of Pipeline (Click)</a>
 
-
-
-This pipeline is designed for unsupervised applications where labels are not available. It can be utilized in various fields, for example:
-
-- **Cybersecurity**: Detect potential cyber attacks.
-- **Data Quality**: Identify broken or inconsistent data.
-- **Marketing**: Discover customers with high revenue and margins.
-- **Finance**: Spot unusual transactions that may indicate fraud.
-- **Energy**: Identify anomalies in energy consumption patterns that could indicate inefficiencies or issues with the power grid.
-
-
-
 ## Abstract View - Project
 ![alt text](./images/project.png)
 
@@ -65,7 +53,8 @@ if __name__ == "__main__":
 
 #### Data: https://www.kaggle.com/datasets/sudalairajkumar/daily-temperature-of-major-cities
 ---
-
+## Pipeline - Logic
+![alt text](./images/decision_rules.png)
 
 ## Highlights ⭐
 
@@ -87,8 +76,7 @@ if __name__ == "__main__":
 
 ---
 
-## Pipeline - Logic
-![alt text](./images/decision_rules.png)
+
 
 
 
@@ -100,9 +88,19 @@ if __name__ == "__main__":
 - https://www.researchgate.net/publication/379640146_Detektion_von_Anomalien_in_der_Datenqualitatskontrolle_mittels_unuberwachter_Ansatze (German Thesis)
 
 ### Further Information
+
+This pipeline is designed for unsupervised applications where labels are not available. It can be utilized in various fields, for example:
+
+- **Cybersecurity**: Detect potential cyber attacks.
+- **Data Quality**: Identify broken or inconsistent data.
+- **Marketing**: Discover customers with high revenue and margins.
+- **Finance**: Spot unusual transactions that may indicate fraud.
+- **Energy**: Identify anomalies in energy consumption patterns that could indicate inefficiencies or issues with the power grid.
+
 - Pipeline can also be used to add extra columns (feature engineering)
     - Adds AnomalyLabel to rows
     - Marks univariate outliers
 - I used sklearn's Pipeline and Transformer concept to create this preprocessing pipeline
     - Pipeline: https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
     - Transformer: https://scikit-learn.org/stable/modules/generated/sklearn.base.TransformerMixin.html
+
