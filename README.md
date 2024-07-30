@@ -67,7 +67,7 @@ X_output
 
 ### 📌 Labeling of NaN values in an extra column instead of removing them / *No loss of information*
 
-## Abstract - Project
+## Abstract View (Code Structure)
 ![Abstract view of the project](./images/project.png)
 
 ## Pipeline - Built-in Logic
