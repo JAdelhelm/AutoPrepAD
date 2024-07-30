@@ -27,9 +27,7 @@ pipeline = AutoPrepAD()
 pipeline.fit(
     X_train=df_data,
     clf=clf_pca,
-    dump_model=False,
 )
-
 X_output = pipeline.predict(X_test=df_data)
 ````
 
