@@ -48,13 +48,13 @@ X_output
 ## Example
 ![Dataframe output - Example](./images/example_output.png)
 
-## Abstract - Project
-![Abstract view of the project](./images/project.png)
-
-## Pipeline - Built-in Logic
-![Logic of Pipeline](./images/decision_rules.png)
-
 ## Highlights ⭐
+
+
+### 📌 Implementation of univariate methods / *Detection of univariate anomalies*
+   Both methods (MOD Z-Value and Tukey Method) are resilient against outliers, ensuring that the position measurement will not be biased. They also support multivariate anomaly detection algorithms in identifying univariate anomalies.
+   * MAD_Total
+   * Tukey_Total
 
 ### 📌 BinaryEncoder instead of OneHotEncoder for nominal columns / *Big Data and Performance*
    Newest research shows similar results for encoding nominal columns with significantly fewer dimensions.
@@ -63,13 +63,17 @@ X_output
    - (Diogo Seca and João Mendes-Moreira. "Benchmark of Encoders of Nominal Features for Regression." In: World Conference on Information Systems and Technologies. 2021, pp. 146–155.)
        - P. 151
 
-
-### 📌 Implementation of univariate methods / *Detection of univariate anomalies*
-   Both methods (MOD Z-Value and Tukey Method) are resilient against outliers, ensuring that the position measurement will not be biased. They also support multivariate anomaly detection algorithms in identifying univariate anomalies.
-
 ### 📌 Transformation of time series data and standardization of data with RobustScaler / *Normalization for better prediction results*
 
 ### 📌 Labeling of NaN values in an extra column instead of removing them / *No loss of information*
+
+## Abstract - Project
+![Abstract view of the project](./images/project.png)
+
+## Pipeline - Built-in Logic
+![Logic of Pipeline](./images/decision_rules.png)
+
+
 
 
 ---
