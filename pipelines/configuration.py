@@ -130,7 +130,7 @@ class PipelinesConfiguration():
 
     Parameters
     ----------
-    time_column_names : list
+    datetime_columns : list
         List of certain Time-Columns that should be converted in timestamp data types.
 
     exclude_columns : list
@@ -139,11 +139,11 @@ class PipelinesConfiguration():
     """
     def __init__(self):
         self.exclude_columns = None
-        self.time_column_names = None
+        self.datetime_columns = None
 
-    def pre_pipeline(self, time_column_names=None, exclude_columns=None):
+    def pre_pipeline(self, datetime_columns=None, exclude_columns=None):
         self.exclude_columns = exclude_columns
-        self.time_column_names = time_column_names
+        self.datetime_columns = datetime_columns
 
         original_preprocessor = Pipeline(
             steps=[
@@ -154,7 +154,7 @@ class PipelinesConfiguration():
                             (
                                 "X",
                                 XCopySchemaTransformer(
-                                    time_column_names=self.time_column_names,
+                                    datetime_columns=self.datetime_columns,
                                     exclude_columns=self.exclude_columns,
                                     name_transformer="Schema Standard Pipeline",
                                 ),
@@ -185,7 +185,7 @@ class PipelinesConfiguration():
                                         (
                                             "X_nan",
                                             XCopySchemaTransformer(
-                                                time_column_names=self.time_column_names,
+                                                datetime_columns=self.datetime_columns,
                                                 name_transformer="Schema NaNMarker",
                                             ),
                                         ),
@@ -395,7 +395,7 @@ class PipelinesConfiguration():
     def pattern_extraction(
         self,
         pattern_recognition_exclude_columns: list = None,
-        time_column_names_pattern: list = None,
+        datetime_columns_pattern: list = None,
         deactivate_pattern_recognition: bool = False,
     ):
         if deactivate_pattern_recognition is True:
@@ -432,7 +432,7 @@ class PipelinesConfiguration():
                         "X_pattern",
                         XCopySchemaTransformerPattern(
                             exclude_columns=pattern_recognition_exclude_columns,
-                            time_column_names=time_column_names_pattern,
+                            datetime_columns=datetime_columns_pattern,
                             name_transformer="Schema PatternExtraction",
                         ),
                     ),
@@ -475,7 +475,7 @@ class PipelinesConfiguration():
                     (
                         "X_pattern",
                         XCopySchemaTransformerPattern(
-                            time_column_names=time_column_names_pattern
+                            datetime_columns=datetime_columns_pattern
                         ),
                     ),
                     (
@@ -514,7 +514,7 @@ class PipelinesConfiguration():
     def nominal_pipeline(
         self,
         nominal_columns: list = None,
-        time_column_names: list = None,
+        datetime_columns: list = None,
     ):
         return Pipeline(
             steps=[
@@ -522,7 +522,7 @@ class PipelinesConfiguration():
                     "X_nominal",
                     XCopySchemaTransformerNominal(
                         nominal_columns=nominal_columns,
-                        time_column_names=time_column_names,
+                        datetime_columns=datetime_columns,
                         name_transformer="Schema Nominal",
                     ),
                 ),
@@ -556,7 +556,7 @@ class PipelinesConfiguration():
     def ordinal_pipeline(
         self,
         ordinal_columns: list = None,
-        time_column_names: list = None,
+        datetime_columns: list = None,
     ):
         """
         Separate Behandlung von Ordinalen Spalten
@@ -567,7 +567,7 @@ class PipelinesConfiguration():
                     "X_ordinal",
                     XCopySchemaTransformerOrdinal(
                         ordinal_columns=ordinal_columns,
-                        time_column_names=time_column_names,
+                        datetime_columns=datetime_columns,
                         name_transformer="Schema Ordinal",
                     ),
                 ),

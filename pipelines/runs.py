@@ -76,6 +76,16 @@ class PipelineRuns(Experiment):
 
         try:
             self.fitted_pipeline = self.PipelineStructure.fit(self.X_train_prep)
+        except TypeError as e:
+            message = (
+                "Please check if your data contains datetime columns.\n"
+                "If it does, ensure they are specified using the 'datetime_columns' parameter.\n"
+                "when initializing the AutoPrepAD object.\n"
+            )
+
+            raise DatetimeException(f"{e}\n\n\n{message}")
+
+
         except Exception as e:
             print(self.X_train_prep.isna().sum(), "\n", e, "\n")
             raise
@@ -254,3 +264,8 @@ class PipelineRuns(Experiment):
 
         except Exception as e:
             print(f"An error occurred while checking and renaming statistical outliers: {e}")
+
+
+
+class DatetimeException(Exception):
+    pass

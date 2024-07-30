@@ -43,7 +43,7 @@ class AutoPrepAD():
 
     Parameters
     ----------
-    time_column_names : list
+    datetime_columns : list
         List of column names representing time data that should be converted to timestamp data types.
 
     nominal_columns : list
@@ -84,7 +84,7 @@ class AutoPrepAD():
 
     def __init__(
         self,
-        time_column_names: list = None,
+        datetime_columns: list = None,
         nominal_columns: list = None,
         ordinal_columns: list = None,
         exclude_columns: list = None,
@@ -94,7 +94,7 @@ class AutoPrepAD():
         mark_anomalies_pct_data: float = 0.1):
         #super().__init__()
         self.X_test_output_injected = None
-        self.time_column_names = time_column_names
+        self.datetime_columns = datetime_columns
         self.nominal_columns = nominal_columns
         self.ordinal_columns = ordinal_columns
         self.exclude_columns = exclude_columns
@@ -106,10 +106,10 @@ class AutoPrepAD():
 
         self.model_name = ""
 
-        if self.time_column_names is not None:
+        if self.datetime_columns is not None:
             if self.exclude_columns is None:
                 self.exclude_columns = []
-            self.exclude_columns = self.exclude_columns + self.time_column_names
+            self.exclude_columns = self.exclude_columns + self.datetime_columns
 
 
 
@@ -118,7 +118,7 @@ class AutoPrepAD():
         self.X_test_transformed = None
 
         config_control = ConfigurationControl(
-            time_column_names = self.time_column_names,
+            datetime_columns = self.datetime_columns,
             nominal_columns = self.nominal_columns,
             ordinal_columns = self.ordinal_columns,
             pattern_recognition_exclude_columns = self.pattern_recognition_exclude_columns,

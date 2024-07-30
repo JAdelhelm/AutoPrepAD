@@ -32,7 +32,7 @@ class XCopySchemaTransformer(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    time_column_names : list
+    datetime_columns : list
         List of certain Time-Columns that should be converted in timestamp data types.
 
     exclude_columns : list
@@ -44,9 +44,9 @@ class XCopySchemaTransformer(BaseEstimator, TransformerMixin):
     """
 
     def __init__(
-        self, time_column_names=None, exclude_columns: list = None, name_transformer=""
+        self, datetime_columns=None, exclude_columns: list = None, name_transformer=""
     ):
-        self.time_column_names = time_column_names
+        self.datetime_columns = datetime_columns
 
         self.exclude_columns = exclude_columns
         self.feature_names = None
@@ -70,7 +70,7 @@ class XCopySchemaTransformer(BaseEstimator, TransformerMixin):
 
         for col in X_copy.columns:
             if X_copy[col].dtype == "object":
-                if self.time_column_names is not None and col in self.time_column_names:
+                if self.datetime_columns is not None and col in self.datetime_columns:
                     try:
                         X_copy[col] = pd.to_datetime(
                             X_copy[col], infer_datetime_format=True, errors="coerce"

@@ -71,7 +71,7 @@ class Experiment:
 
     Parameters
     ----------
-    time_column_names : list
+    datetime_columns : list
         List of certain Time-Columns that should be converted in timestamp data types.
 
 

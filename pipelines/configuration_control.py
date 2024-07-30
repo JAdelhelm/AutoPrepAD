@@ -29,7 +29,7 @@ from pipelines.configuration import PipelinesConfiguration
 
 class ConfigurationControl(PipelinesConfiguration):
     def __init__(self,
-        time_column_names: list = None,
+        datetime_columns: list = None,
         nominal_columns: list = None,
         ordinal_columns: list = None,
         pattern_recognition_exclude_columns: list = None,
@@ -37,7 +37,7 @@ class ConfigurationControl(PipelinesConfiguration):
         deactivate_pattern_recognition: bool = False
                  ) -> None:
         super().__init__()
-        self.time_column_names = time_column_names
+        self.datetime_columns = datetime_columns
         self.nominal_columns = nominal_columns
         self.ordinal_columns = ordinal_columns
         self.exclude_columns = exclude_columns
@@ -54,7 +54,7 @@ class ConfigurationControl(PipelinesConfiguration):
                             (
                                 "X",
                                 super().pre_pipeline(
-                                    time_column_names=self.time_column_names,
+                                    datetime_columns=self.datetime_columns,
                                     exclude_columns=self.exclude_columns,
                                 ),
                                 make_column_selector(dtype_include=None),
@@ -121,7 +121,7 @@ class ConfigurationControl(PipelinesConfiguration):
                                     "Categorical_PatternExtraction",
                                     super().pattern_extraction(
                                         pattern_recognition_exclude_columns=self.pattern_recognition_exclude_columns,
-                                        time_column_names_pattern=self.time_column_names,
+                                        datetime_columns_pattern=self.datetime_columns,
                                         deactivate_pattern_recognition=self.deactivate_pattern_recognition,
                                     ),
                                     make_column_selector(dtype_include=np.object_),
@@ -177,7 +177,7 @@ class ConfigurationControl(PipelinesConfiguration):
                                     "Categorical_PatternExtraction",
                                     super().pattern_extraction(
                                         pattern_recognition_exclude_columns=self.pattern_recognition_exclude_columns,
-                                        time_column_names_pattern=self.time_column_names,
+                                        datetime_columns_pattern=self.datetime_columns,
                                         deactivate_pattern_recognition=self.deactivate_pattern_recognition,
                                     ),
                                     make_column_selector(dtype_include=np.object_),
@@ -227,7 +227,7 @@ class ConfigurationControl(PipelinesConfiguration):
                                     "Categorical_PatternExtraction",
                                     super().pattern_extraction(
                                         pattern_recognition_exclude_columns=self.pattern_recognition_exclude_columns,
-                                        time_column_names_pattern=self.time_column_names,
+                                        datetime_columns_pattern=self.datetime_columns,
                                         deactivate_pattern_recognition=self.deactivate_pattern_recognition,
                                     ),
                                     make_column_selector(dtype_include=np.object_),
@@ -277,7 +277,7 @@ class ConfigurationControl(PipelinesConfiguration):
                                     "Categorical_PatternExtraction",
                                     super().pattern_extraction(
                                         pattern_recognition_exclude_columns=self.pattern_recognition_exclude_columns,
-                                        time_column_names_pattern=self.time_column_names,
+                                        datetime_columns_pattern=self.datetime_columns,
                                         deactivate_pattern_recognition=self.deactivate_pattern_recognition,
                                     ),
                                     make_column_selector(dtype_include=np.object_),
