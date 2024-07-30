@@ -11,7 +11,7 @@ It is widely acknowledged that anomalies are among the most important data sourc
 
 ## Basic Usage
 
-AutoPrepAD creates a pipeline structure that can be used for automated preprocessing in conjuction with an anomaly detection method. It has a built-in logic of how to **automatically** clean and process your data.  
+AutoPrepAD creates a pipeline structure that can be used for automated preprocessing in conjuction with an unsupervised anomaly detection method. It has a built-in logic of how to **automatically** clean and process your data.  
 You can let your dataset run through the default AutoPrepAD pipeline by using:
 
 
