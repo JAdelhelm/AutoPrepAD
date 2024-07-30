@@ -67,6 +67,9 @@ X_output
 
 ### 📌 Labeling of NaN values in an extra column instead of removing them / *No loss of information*
 
+---
+---
+
 ## Abstract View (Code Structure)
 ![Abstract view of the project](./images/project.png)
 
