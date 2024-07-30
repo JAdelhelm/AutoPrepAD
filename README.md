@@ -1,60 +1,58 @@
-# UAADP - Unsupervised Automated Anomaly Detection Pipeline
-<a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html" target="_blank">Structure of Pipeline (Click)</a>
+# AutoPrepAD - Automated Preprocessing Anomaly Detection Pipeline
+<a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html" target="_blank">Structure of Preprocessing Pipeline</a>
 
-## Abstract View - Project
-![alt text](./images/project.png)
+## Description
+Anomaly detection is becoming increasingly important today, being utilized in various fields such as cybersecurity, data quality, healthcare, and many more. However, data preprocessing in this field is a crucial yet often time-consuming step. *Imagine gaining insights from unlabeled data while applying anomaly detection methods seamlessly.*
+
+✅ AutPrepAD is designed to help with exactly that. It performs **preprocessing** and **cleaning** of data in Python in an **automated manner**, allowing you to **save time** and gain insights from your data.
+
+It is widely acknowledged that anomalies are among the most important data sources due to their significant informational potential. By using this pipeline, you can save time and gain insights from data, especially when there is a lack of labels!
 
 
+## Basic Usage
 
-## Usage 
+AutoPrepAD creates a pipeline structure that can be used for automated preprocessing in conjuction with an anomaly detection method. It has a built-in logic of how to **automatically** clean and process your data.  
+You can let your dataset run through the default AutoPrepAD pipeline by using:
 
 
-```python
-import numpy as np
-import pandas as pd
-
-from pipelines.control import UAADP
-from pipelines.defaults import initialize_autoencoder, initialize_autoencoder_modified
-from pipelines.defaults import dummy_data
-pd.set_option("display.max_columns", None)
-# from pyod.models.iforest import IForest
-# from pyod.models.lof import LOF
+````python
+from pipelines.control import AutoPrepAD
 from pyod.models.pca import PCA
 
+df_data = pd.read_csv("./temperature_USA.csv")
+clf_pca = PCA()
 
+pipeline = AutoPrepAD()
 
-if __name__ == "__main__":
-    df_data = pd.read_csv("./temperature_USA.csv")
+pipeline.fit(
+    X_train=df_data,
+    clf=clf_pca,
+    dump_model=False,
+)
 
-    clf_pca = PCA()
+X_output = pipeline.predict(X_test=df_data)
+````
 
-    anomaly_detection_pipeline = UAADP(
-        exclude_columns=[],
-        deactivate_pattern_recognition=True,
-        exclude_columns_no_variance=True,
-        mark_anomalies_pct_data=0.01
-    )
+The resulting output dataframe can be accessed by using:
 
-    anomaly_detection_pipeline.fit(
-        X_train=df_data,
-        clf=clf_pca,
-        dump_model=False,
-    )
-    
-    X_output = anomaly_detection_pipeline.predict(X_test=df_data)
+````python
+X_output
 
+> Output:
+    AnomalyScore  col_1  col_2   ...   col_n
+1   data   ...    data   data    ...   data
+2   data   ...    data   data    ...   data
+... ...    ...    ...   ...      ...   ...
+````
 
-    X_output.to_csv("temperatures_anomalies.csv", index=False)
+## Example
+![Dataframe output - Example](./images/example_output.png)
 
-    # anomaly_detection_pipeline.visualize_pipeline_structure_html()
+## Abstract - Project
+![Abstract view of the project](./images/project.png)
 
-```
-
-
-#### Data: https://www.kaggle.com/datasets/sudalairajkumar/daily-temperature-of-major-cities
----
-## Pipeline - Logic
-![alt text](./images/decision_rules.png)
+## Pipeline - Built-in Logic
+![Logic of Pipeline](./images/decision_rules.png)
 
 ## Highlights ⭐
 

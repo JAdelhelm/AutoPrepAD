@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from pipelines.control import UAADP
+
 from pipelines.defaults import initialize_autoencoder, initialize_autoencoder_modified
 from pipelines.defaults import dummy_data
 pd.set_option("display.max_columns", None)
@@ -10,7 +10,7 @@ pd.set_option("display.max_columns", None)
 # from pyod.models.lof import LOF
 from pyod.models.pca import PCA
 
-
+from pipelines.control import AutoPrepAD
 
 if __name__ == "__main__":
     df_data = pd.read_csv("./temperature_USA.csv")
@@ -19,20 +19,15 @@ if __name__ == "__main__":
     clf_pca = PCA()
     # clf_ae = initialize_autoencoder_modified()
 
-    anomaly_detection_pipeline = UAADP(
-        exclude_columns=[],
-        deactivate_pattern_recognition=True,
-        exclude_columns_no_variance=True,
-        mark_anomalies_pct_data=0.01
-    )
+    pipeline = AutoPrepAD()
 
-    anomaly_detection_pipeline.fit(
+    pipeline.fit(
         X_train=df_data,
         clf=clf_pca,
         dump_model=False,
     )
     
-    X_output = anomaly_detection_pipeline.predict(X_test=df_data)
+    X_output = pipeline.predict(X_test=df_data)
 
 
     X_output.to_csv("temperatures_anomalies.csv", index=False)

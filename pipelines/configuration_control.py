@@ -4,7 +4,7 @@ from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
-from sklearn import set_config
+
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler

@@ -190,8 +190,10 @@ class PipelinesConfiguration():
                                             ),
                                         ),
                                         # ("nan_marker_total", NaNColumnCreator()),
+
                                         ("nan_marker", MissingIndicator(features="all")),
-                                        # Markiert nur die Werte, die außerhalb des Wertebreichs liegen
+
+
                                         # ("tukey_missing", TukeyTransformer(factor=1.5)),   
                                         # ("tukey_total_missing", TukeyTransformerTotal()),                                     
                                         # (

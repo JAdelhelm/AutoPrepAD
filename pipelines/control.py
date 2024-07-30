@@ -37,7 +37,7 @@ except: from configuration_control import ConfigurationControl
 
 set_config(transform_output="pandas")
 
-class UAADP():
+class AutoPrepAD():
     """
     The AADP (Automated Anomaly Detection Pipeline) class represents the control class/main class for managing and executing configurated pipelines.
 
@@ -89,8 +89,8 @@ class UAADP():
         ordinal_columns: list = None,
         exclude_columns: list = None,
         pattern_recognition_exclude_columns: list = None,
-        exclude_columns_no_variance: bool = False,
-        deactivate_pattern_recognition: bool = False,
+        exclude_columns_no_variance: bool = True,
+        deactivate_pattern_recognition: bool = True,
         mark_anomalies_pct_data: float = 0.1):
         #super().__init__()
         self.X_test_output_injected = None
@@ -159,7 +159,7 @@ class UAADP():
 
     def visualize_pipeline_structure_html(self, filename="./visualization/PipelineDQ"):
         """
-        Speichert die Pipeline als html-Datei.
+        Saves pipeline structure as html.
         """
         Path("./visualization").mkdir(parents=True, exist_ok=True)
         Path("./visualization/PipelineDQ").mkdir(parents=True, exist_ok=True)
