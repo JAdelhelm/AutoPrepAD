@@ -17,11 +17,53 @@ from functools import reduce
 from pipelines.experiment.experiment import Experiment
 
 class PipelineRuns(Experiment):
+    """
+    A class to run machine learning pipelines with anomaly detection.
+
+    Attributes
+    ----------
+    PipelineStructure : object
+        The structure of the pipeline to be fitted.
+    remove_columns_with_no_variance : bool, optional
+        Whether to remove columns with no variance (default is False).
+    exclude_columns : list, optional
+        List of columns to exclude from the pipeline (default is None).
+    mark_anomalies_pct_data : float, optional
+        Percentage of data to mark as anomalies (default is 0.1).
+    
+    Methods
+    -------
+    fit_pipeline(X_train, clf=None, dump_model=False)
+        Fits the pipeline and trains the anomaly detection model.
+    predict_pipeline(X_test)
+        Predicts anomalies based on the fitted pipeline.
+    remove_excluded_columns(df)
+        Removes specified columns from the dataframe.
+    remove_no_variance_columns(X_train, X_test=None, remove_no_variance=False, name="Train")
+        Removes columns with no variance from the dataframe.
+    check_and_rename_statistical_outliers()
+        Checks for statistical outliers and renames columns accordingly.
+    """
+
     def __init__(self,
                  PipelineStructure: object,
-                 remove_columns_with_no_variance = False,
-                 exclude_columns = None,
+                 remove_columns_with_no_variance=False,
+                 exclude_columns=None,
                  mark_anomalies_pct_data=0.1) -> None:
+        """
+        Constructs all the necessary attributes for the PipelineRuns object.
+
+        Parameters
+        ----------
+        PipelineStructure : object
+            The structure of the pipeline to be fitted.
+        remove_columns_with_no_variance : bool, optional
+            Whether to remove columns with no variance (default is False).
+        exclude_columns : list, optional
+            List of columns to exclude from the pipeline (default is None).
+        mark_anomalies_pct_data : float, optional
+            Percentage of data to mark as anomalies (default is 0.1).
+        """
         self.PipelineStructure = PipelineStructure
         self.remove_columns_with_no_variance = remove_columns_with_no_variance
         self.exclude_columns = exclude_columns
@@ -46,22 +88,27 @@ class PipelineRuns(Experiment):
 
     @property
     def X_train_transformed(self):
+        """Returns the transformed training data."""
         return self._X_train_transformed
 
     @property
     def X_test_transformed(self):
+        """Returns the transformed test data."""
         return self._X_test_transformed
     
     @property
     def X_train(self):
+        """Returns the original training data."""
         return self._X_train
     
     @property
     def X_test(self):
+        """Returns the original test data."""
         return self._X_test
 
     @X_test.setter
     def X_test(self, value):
+        """Sets the original test data."""
         self._X_test = value
     
 
@@ -71,6 +118,18 @@ class PipelineRuns(Experiment):
             clf: pyod.models = None,
             dump_model: bool = False,
     ):
+        """
+        Fits the pipeline and trains the anomaly detection model.
+
+        Parameters
+        ----------
+        X_train : pd.DataFrame
+            The training data.
+        clf : pyod.models, optional
+            The anomaly detection model (default is None).
+        dump_model : bool, optional
+            Whether to dump the model to a file (default is False).
+        """
         print("Fitting Pipeline and train anomaly detection model...")
         self.X_train_prep = self.remove_excluded_columns(X_train)
 
@@ -110,6 +169,19 @@ class PipelineRuns(Experiment):
             self,
             X_test: pd.DataFrame
     ):
+        """
+        Predicts anomalies based on the fitted pipeline.
+
+        Parameters
+        ----------
+        X_test : pd.DataFrame
+            The test data.
+
+        Returns
+        -------
+        pd.DataFrame
+            The test data with anomaly scores and labels.
+        """
         print("Prediction of Anomalies, based on fitted Pipeline...")
         self.X_test_prep = self.remove_excluded_columns(X_test)
 
@@ -148,6 +220,19 @@ class PipelineRuns(Experiment):
             return self.X_test.sort_values("AnomalyScore", ascending=False)
 
     def remove_excluded_columns(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Removes specified columns from the dataframe.
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            The input dataframe.
+
+        Returns
+        -------
+        pd.DataFrame
+            The dataframe with specified columns removed.
+        """
         df_modified = df.copy()
         if self.exclude_columns is not None:
             for col in self.exclude_columns:
@@ -160,6 +245,25 @@ class PipelineRuns(Experiment):
     def remove_no_variance_columns(
         self, X_train, X_test=None, remove_no_variance=False, name="Train"
     ) -> (pd.DataFrame, pd.DataFrame):
+        """
+        Removes columns with no variance from the dataframe.
+
+        Parameters
+        ----------
+        X_train : pd.DataFrame
+            The training data.
+        X_test : pd.DataFrame, optional
+            The test data (default is None).
+        remove_no_variance : bool, optional
+            Whether to remove columns with no variance (default is False).
+        name : str, optional
+            The name of the dataset (default is "Train").
+
+        Returns
+        -------
+        pd.DataFrame or tuple of pd.DataFrame
+            The modified training data, and optionally the modified test data.
+        """
         if X_test is None:
             X_train_cols_no_variance = X_train.loc[:, X_train.std() == 0.0].columns
             print("No Variance in follow Train Columns: ", X_train_cols_no_variance)
@@ -237,6 +341,9 @@ class PipelineRuns(Experiment):
                 return X_train, X_test
 
     def check_and_rename_statistical_outliers(self):
+        """
+        Checks for statistical outliers and renames columns accordingly.
+        """
         try:
             column_name_mad_total = [
                 col for col in self.X_test_transformed_model.columns if col.endswith("MAD_Total")
@@ -265,7 +372,13 @@ class PipelineRuns(Experiment):
         except Exception as e:
             print(f"An error occurred while checking and renaming statistical outliers: {e}")
 
-
-
 class DatetimeException(Exception):
+    """
+    Exception raised for errors in the datetime handling in the pipeline.
+
+    Attributes
+    ----------
+    message : str
+        Explanation of the error.
+    """
     pass

@@ -28,6 +28,39 @@ from pipelines.configuration import PipelinesConfiguration
 
 
 class ConfigurationControl(PipelinesConfiguration):
+    """
+    The ConfigurationControl class extends PipelinesConfiguration and manages the configuration 
+    of preprocessing pipelines for anomaly detection.
+
+    Parameters
+    ----------
+    datetime_columns : list, optional
+        List of column names representing time data that should be converted to timestamp data types. Default is None.
+
+    nominal_columns : list, optional
+        Columns that should be transformed to nominal data types. Default is None.
+
+    ordinal_columns : list, optional
+        Columns that should be transformed to ordinal data types. Default is None.
+
+    pattern_recognition_exclude_columns : list, optional
+        List of columns to be excluded from pattern recognition. Default is None.
+
+    exclude_columns : list, optional
+        List of columns to be dropped from the dataset. Default is None.
+
+    deactivate_pattern_recognition : bool, optional
+        If set to True, the pattern recognition transformer will be deactivated. Default is False.
+
+    Methods
+    -------
+    standard_pipeline_configuration()
+        Returns the standard pipeline configuration with profiling, datatypes, and preprocessing steps.
+
+    pipeline_configuration()
+        Returns the complete pipeline configuration based on provided columns and settings.
+
+    """
     def __init__(self,
         datetime_columns: list = None,
         nominal_columns: list = None,
@@ -45,6 +78,17 @@ class ConfigurationControl(PipelinesConfiguration):
         self.deactivate_pattern_recognition = deactivate_pattern_recognition
 
     def standard_pipeline_configuration(self):
+        """
+        Create and return the standard pipeline configuration.
+
+        The pipeline includes profiling, datatype transformation, and preprocessing steps
+        for categorical, numerical, and timeseries data.
+
+        Returns
+        -------
+        Pipeline
+            A configured sklearn Pipeline object.
+        """
         return Pipeline(
             steps=[
                 (
@@ -99,6 +143,18 @@ class ConfigurationControl(PipelinesConfiguration):
         )
 
     def pipeline_configuration(self):
+        """
+        Create and return the complete pipeline configuration.
+
+        The pipeline includes the standard pipeline configuration along with
+        additional steps for handling nominal and ordinal columns, NaN marker,
+        and pattern extraction based on the provided settings.
+
+        Returns
+        -------
+        Pipeline
+            A configured sklearn Pipeline object.
+        """
         if self.nominal_columns is None and self.ordinal_columns is None:
             standard_pipeline = self.standard_pipeline_configuration()
             return Pipeline(
