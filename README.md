@@ -29,6 +29,9 @@ pipeline.fit(
     clf=clf_pca,
 )
 X_output = pipeline.predict(X_test=df_data)
+
+## Only automated preprocessing of the Dataframe
+# X_preprocess = pipeline.preprocess(df=df_data)
 ````
 
 The resulting output dataframe can be accessed by using:
