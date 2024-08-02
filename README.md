@@ -29,6 +29,9 @@ pipeline.fit(
     clf=clf_pca,
 )
 X_output = pipeline.predict(X_test=df_data)
+
+## Only automated preprocessing of the Dataframe
+# X_preprocess = pipeline.preprocess(df=df_data)
 ````
 
 The resulting output dataframe can be accessed by using:
@@ -68,6 +71,7 @@ X_output
 ---
 ---
 
+
 ## Abstract View (Code Structure)
 ![Abstract view of the project](./images/project.png)
 
@@ -78,10 +82,6 @@ X_output
 
 
 ---
-
-
-
-
 
 ---
 
@@ -106,4 +106,19 @@ This pipeline is designed for unsupervised applications where labels are not ava
 - I used sklearn's Pipeline and Transformer concept to create this preprocessing pipeline
     - Pipeline: https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
     - Transformer: https://scikit-learn.org/stable/modules/generated/sklearn.base.TransformerMixin.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
