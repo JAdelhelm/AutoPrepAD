@@ -39,30 +39,34 @@ set_config(transform_output="pandas")
 
 class AutoPrepAD():
     """
-    The AADP (Automated Anomaly Detection Pipeline) class represents the control class/main class for managing and executing configurated pipelines.
+    The AutoPrepAD (Automated Preprocessing Anomaly Detection Pipeline) class manages and executes configured pipelines 
+    for anomaly detection, automating the preprocessing of data.
 
     Parameters
     ----------
-    datetime_columns : list
-        List of column names representing time data that should be converted to timestamp data types.
+    datetime_columns : list, optional
+        List of column names representing time data that should be converted to timestamp data types. Default is None.
 
-    nominal_columns : list
-        Columns that should be transformed to nominal data types.
+    nominal_columns : list, optional
+        Columns that should be transformed to nominal data types. Default is None.
 
-    ordinal_columns : list
-        Columns that should be transformed to ordinal data types.
+    ordinal_columns : list, optional
+        Columns that should be transformed to ordinal data types. Default is None.
 
-    exclude_columns : list
-        List of columns to be dropped from the dataset.
+    exclude_columns : list, optional
+        List of columns to be dropped from the dataset. Default is None.
 
-    pattern_recognition_exclude_columns : list
-        List of columns to be excluded from pattern recognition.
+    pattern_recognition_exclude_columns : list, optional
+        List of columns to be excluded from pattern recognition. Default is None.
 
-    remove_columns_with_no_variance : bool
-        If set to True, all columns with zero standard deviation/variance will be removed.
+    exclude_columns_no_variance : bool, optional
+        If set to True, all columns with zero standard deviation/variance will be removed. Default is True.
 
-    deactivate_pattern_recognition : bool
-        If set to True, the pattern recognition transformer will be deactivated.
+    deactivate_pattern_recognition : bool, optional
+        If set to True, the pattern recognition transformer will be deactivated. Default is True.
+
+    mark_anomalies_pct_data : float, optional
+        Percentage of the data to be marked as anomalies. Default is 0.1.
 
     Attributes
     ----------
@@ -138,6 +142,26 @@ class AutoPrepAD():
             clf: pyod.models = None,
             dump_model: bool = False,
     ) -> Pipeline:
+        """
+        Fits a pipeline to the provided training data using the specified anomaly detection algorithm.
+
+        Parameters
+        ----------
+        X_train : pd.DataFrame
+            A DataFrame containing (best case - clean and anomaly-free) training data that the pipeline and anomaly detection algorithm will be fitted to.
+
+        clf : pyod.models, optional
+            An instance of an anomaly detection model from the pyod library to be used for fitting. If not provided, a default model will be used.
+
+        dump_model : bool, optional
+            A flag indicating whether the fitted model should be saved to disk. Default is False.
+
+        Returns
+        -------
+        Pipeline
+            The fitted pipeline.
+
+        """
         
         return self.runs.fit_pipeline(
             X_train=X_train,
@@ -150,16 +174,80 @@ class AutoPrepAD():
             self,
             X_test: pd.DataFrame
     ) -> pd.DataFrame:
+        """
+        Predict anomalies in the test data using the fitted pipeline.
+
+        This method takes a DataFrame, processes it through the fitted pipeline,
+        and returns the original DataFrame enriched with additional columns that
+        represent the anomaly scores.
+
+        Parameters
+        ----------
+        X_test : pd.DataFrame
+            A DataFrame potentially containing anomalies to be predicted.
+
+        Returns
+        -------
+        pd.DataFrame
+            The original DataFrame enriched with columns representing anomaly scores.
+
+        Examples
+        --------
+        >>> model = AutoPrepAD()
+        >>> model.fit(X_train, clf)
+        >>> X_test_with_scores = model.predict(X_test)
+        >>> print(X_test_with_scores.head())
+        """
         
         return self.runs.predict_pipeline(
             X_test=X_test
         )
-        
+
+    def preprocess(
+            self,
+            df: pd.DataFrame
+    )  -> pd.DataFrame:
+        """
+        Preprocesses the given DataFrame.
+
+        This method applies a preprocessing pipeline to the input DataFrame,
+        which may include operations such as encoding columns and other 
+        transformations necessary for the dataset to be in a suitable form 
+        for further analysis or modeling.
+
+        Parameters:
+        -----------
+        df : pd.DataFrame
+            The input DataFrame that needs to be preprocessed.
+
+        Returns:
+        --------
+        pd.DataFrame
+            The preprocessed DataFrame with all necessary transformations applied.
+        """
+        return self.runs.preprocess_pipeline(
+            df = df
+        )
+          
 
 
     def visualize_pipeline_structure_html(self, filename="./visualization/PipelineDQ"):
         """
-        Saves pipeline structure as html.
+        Save the pipeline structure as an HTML file.
+
+        This method creates the necessary directories (if they do not already exist) 
+        and saves a visual representation of the pipeline structure to an HTML file.
+
+        Parameters
+        ----------
+        filename : str, optional
+            The path and filename for the HTML file. The default is "./visualization/PipelineDQ".
+
+        Returns
+        -------
+        None
+            This function does not return any value. It only saves the HTML file.
+
         """
         Path("./visualization").mkdir(parents=True, exist_ok=True)
         Path("./visualization/PipelineDQ").mkdir(parents=True, exist_ok=True)

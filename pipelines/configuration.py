@@ -1,141 +1,91 @@
+"""
+Module for configuring and creating preprocessing pipelines.
+
+This module provides the `PipelinesConfiguration` class which includes various methods to create
+and configure pipelines for preprocessing numerical, categorical, timeseries, and pattern data.
+
+Classes:
+    PipelinesConfiguration: Configures pipelines for preprocessing different types of data.
+    columnDropperTransformer: Drops specified columns from the data.
+
+Imports:
+    numpy as np
+    pandas as pd
+    sklearn and other relevant libraries for data preprocessing and transformation.
+"""
+
 import numpy as np
 import pandas as pd
-
-# import pandas_profiling as pp
-
-
 from pipelines.preprocessing.nan_handling.NaNColumnCreator import NaNColumnCreator
 from pipelines.preprocessing.nan_handling.NaNColumnCreatorTotal import NaNColumnCreatorTotal
-
 from pipelines.preprocessing.statistical.TukeyTransformer import TukeyTransformer
 from pipelines.preprocessing.statistical.TukeyTransformerTotal import TukeyTransformerTotal
-
-# from pipelines.preprocessing.statistical.ZTransformerMean import ZTransformerMean
-# from pipelines.preprocessing.statistical.ZTransformerMeanTotal import ZTransformerMeanTotal
-
 from pipelines.preprocessing.statistical.MedianAbsolutDeviation import MedianAbsolutDeviation
-from pipelines.preprocessing.statistical.MedianAbsolutDeviationTotal import (
-    MedianAbsolutDeviationTotal,
-)
-
+from pipelines.preprocessing.statistical.MedianAbsolutDeviationTotal import MedianAbsolutDeviationTotal
 from pipelines.preprocessing.statistical.SpearmanCheck import SpearmanCorrelationCheck
-
-# from pipelines.preprocessing.engineering.CategoricalPatternsAutoEncoder import CategoricalPatternsAutoEncoder
-
 from pipelines.preprocessing.engineering.CategoricalPatterns import CategoricalPatterns
-
 from pipelines.preprocessing.dummy.XCopySchemaTransformer import XCopySchemaTransformer
-from pipelines.preprocessing.dummy.XCopySchemaTransformerNominal import (
-    XCopySchemaTransformerNominal,
-)
-from pipelines.preprocessing.dummy.XCopySchemaTransformerOrdinal import (
-    XCopySchemaTransformerOrdinal,
-)
-from pipelines.preprocessing.dummy.XCopySchemaTransformerPattern import (
-    XCopySchemaTransformerPattern,
-)
-
+from pipelines.preprocessing.dummy.XCopySchemaTransformerNominal import XCopySchemaTransformerNominal
+from pipelines.preprocessing.dummy.XCopySchemaTransformerOrdinal import XCopySchemaTransformerOrdinal
+from pipelines.preprocessing.dummy.XCopySchemaTransformerPattern import XCopySchemaTransformerPattern
 from pipelines.preprocessing.timeseries.DateEncoder import DateEncoder
-
 from pipelines.preprocessing.timeseries.TimeSeriesImputer import TimeSeriesImputer
-
-# from pipelines.preprocessing.estimator.KMedian import KMedianEstimator
-
-
 from sklearn.compose import ColumnTransformer, make_column_selector
-from sklearn.impute import SimpleImputer
+from sklearn.impute import SimpleImputer, MissingIndicator
 from sklearn.pipeline import make_pipeline, Pipeline
-from sklearn.preprocessing import FunctionTransformer, StandardScaler
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import (
-    OneHotEncoder,
-    LabelEncoder,
-    OrdinalEncoder,
-    RobustScaler,
-)
-from sklearn.impute import MissingIndicator
-
+from sklearn.preprocessing import FunctionTransformer, StandardScaler, OneHotEncoder, LabelEncoder, OrdinalEncoder, RobustScaler
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer, KNNImputer
-
 from category_encoders import BinaryEncoder
-from sklearn.base import BaseEstimator, TransformerMixin
-
-import warnings
-
 from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
-
-
-
-import itertools
 from sklearn import set_config
+import warnings
+import itertools
+from ydata_profiling import ProfileReport
+
 set_config(transform_output="pandas")
 
 
 class PipelinesConfiguration():
     """
-    The PipelinesConfiguration class represents the class to configure pipelines.
+    The PipelinesConfiguration class represents the class to configure pipelines for data preprocessing.
 
     Methods
-    ----------
-        - pre_pipeline:
-            A transformer that executes the schema and other steps to prepare data for the transformation pipeline.
-                - If ``self.exclude_columns`` has entries, the corresponding columns will be dropped.
-
-        - nan_marker_pipeline:\n
-            Pipeline that marks columns with NaN-Values.
-            Steps: \n
-                1. Attempt to infer schema of columns.
-                2. Mark corresponding columns with Nan-Values
-
-        - numeric_pipeline:\n
-            Pipeline for preprocessing of numerical data.
-            Steps:\n
-                1. Impute numerical data.
-                2. The resulting columns are input to the statistical methods.
-
-        - categorical_pipeline:\n
-            Pipeline for preprocessing of categorical data.
-            Steps:\n
-                1. Impute categorical data.
-                2. BinaryEncode categorical data.
-
-        - timeseries_pipeline:\n
-            Pipeline for preprocessing of timeseries data.
-            Steps:\n
-                1. Impute timeseries data.
-                2. Extract time units from corresponding timeseries columns.
-
-        - pattern_extraction:\n
-            Pipeline to extract patterns from categorical data.
-            Includes columnDropperTransformer that drops the columns,
-            pattern_extraction is deactivated.
-            Steps:\n
-                1. Infer Schema of data.
-                2. Impute Data.
-                3. Extract patterns.
-                4. Binary encode the extracted patterns.
-            
+    -------
+    pre_pipeline(datetime_columns=None, exclude_columns=None):
+        Creates a preprocessing pipeline to prepare data for transformation.
         
-        - nominal_pipeline:\n
-            Pipeline for separate preprocessing of nominal data.
+    nan_marker_pipeline():
+        Creates a pipeline that marks columns with NaN values.
 
-        - ordinal_pipeline:\n
-            Pipeline for separate preprocessing of ordinal data.        
-        
-        - get_profiling:\n
-            Method to get a profiling of the corresponding input DataFrame.
-        
+    numeric_pipeline():
+        Creates a pipeline for preprocessing numerical data.
 
+    categorical_pipeline():
+        Creates a pipeline for preprocessing categorical data.
+
+    timeseries_pipeline():
+        Creates a pipeline for preprocessing timeseries data.
+
+    pattern_extraction(pattern_recognition_exclude_columns=None, datetime_columns_pattern=None, deactivate_pattern_recognition=False):
+        Creates a pipeline to extract patterns from categorical data.
+
+    nominal_pipeline(nominal_columns=None, datetime_columns=None):
+        Creates a pipeline for separate preprocessing of nominal data.
+
+    ordinal_pipeline(ordinal_columns=None, datetime_columns=None):
+        Creates a pipeline for separate preprocessing of ordinal data.
+
+    get_profiling(X: pd.DataFrame, deeper_profiling=False):
+        Generates a profiling report of the input DataFrame.
 
     Parameters
     ----------
     datetime_columns : list
-        List of certain Time-Columns that should be converted in timestamp data types.
+        List of Time-Columns that should be converted to timestamp data types.
 
     exclude_columns : list
-        List of Columns that should be dropped.
-
+        List of columns that should be dropped.
     """
     def __init__(self):
         self.exclude_columns = None
