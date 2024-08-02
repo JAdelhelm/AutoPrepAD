@@ -84,6 +84,8 @@ class PipelineRuns(Experiment):
         self.X_train_transformed_model = None
         self.X_test_transformed_model = None
 
+        self.X_preprocessed = None
+
         self.no_variance_columns = None
 
     @property
@@ -218,6 +220,69 @@ class PipelineRuns(Experiment):
             y_pred_array = (first_column > threshold_AD).astype(int)
             self.X_test["AnomalyLabel"] = y_pred_array
             return self.X_test.sort_values("AnomalyScore", ascending=False)
+        
+
+
+    def preprocess_pipeline(
+            self, 
+            df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Applies a preprocessing pipeline to the input DataFrame.
+
+        This method performs several preprocessing steps on the given DataFrame, 
+        including removing excluded columns, fitting the specified pipeline 
+        structure, transforming the data, and removing columns with no variance. 
+        It ensures that the data is properly transformed and ready for further 
+        analysis or modeling.
+
+        Parameters:
+        -----------
+        df : pd.DataFrame
+            The input DataFrame that needs to be preprocessed.
+
+        Returns:
+        --------
+        pd.DataFrame
+            The preprocessed DataFrame with all necessary transformations applied.
+        """
+
+        print("Transforming Input Dataframe with Pipeline...")
+        self.X_preprocessed =  self.remove_excluded_columns(df)
+
+        try:
+            self.fitted_pipeline = self.PipelineStructure.fit(self.X_preprocessed)
+        except TypeError as e:
+            message = (
+                "Please check if your data contains datetime columns.\n"
+                "If it does, ensure they are specified using the 'datetime_columns' parameter.\n"
+                "when initializing the AutoPrepAD object.\n"
+            )
+
+            raise DatetimeException(f"{e}\n\n\n{message}")
+
+
+        except Exception as e:
+            print(self.X_preprocessed.isna().sum(), "\n", e, "\n")
+            raise
+
+        self.X_preprocessed = self.fitted_pipeline.transform(self.X_preprocessed)
+
+        self.X_preprocessed = self.remove_no_variance_columns(
+            X_train=self.X_preprocessed,
+            remove_no_variance=self.remove_columns_with_no_variance,
+            name="Preprocessed"
+        )
+
+        return self.X_preprocessed
+
+
+
+
+
+
+
+
+
 
     def remove_excluded_columns(self, df: pd.DataFrame) -> pd.DataFrame:
         """

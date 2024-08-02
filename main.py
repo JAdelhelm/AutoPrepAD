@@ -26,11 +26,15 @@ if __name__ == "__main__":
         clf=clf_pca,
         dump_model=False,
     )
+
     
     X_output = pipeline.predict(X_test=df_data)
 
 
-    X_output.to_csv("temperatures_anomalies.csv", index=False)
+    # X_output.to_csv("temperatures_anomalies.csv", index=False)
+
+    ## Only Preprocessing of the Dataframe
+    # X_preprocess = pipeline.preprocess(df=df_data)
 
     # anomaly_detection_pipeline.visualize_pipeline_structure_html()
 

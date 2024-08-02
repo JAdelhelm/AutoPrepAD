@@ -202,7 +202,33 @@ class AutoPrepAD():
         return self.runs.predict_pipeline(
             X_test=X_test
         )
-        
+
+    def preprocess(
+            self,
+            df: pd.DataFrame
+    )  -> pd.DataFrame:
+        """
+        Preprocesses the given DataFrame.
+
+        This method applies a preprocessing pipeline to the input DataFrame,
+        which may include operations such as encoding columns and other 
+        transformations necessary for the dataset to be in a suitable form 
+        for further analysis or modeling.
+
+        Parameters:
+        -----------
+        df : pd.DataFrame
+            The input DataFrame that needs to be preprocessed.
+
+        Returns:
+        --------
+        pd.DataFrame
+            The preprocessed DataFrame with all necessary transformations applied.
+        """
+        return self.runs.preprocess_pipeline(
+            df = df
+        )
+          
 
 
     def visualize_pipeline_structure_html(self, filename="./visualization/PipelineDQ"):
