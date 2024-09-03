@@ -1,6 +1,9 @@
 # AutoPrepAD - Automated Preprocessing Anomaly Detection Pipeline
 <a href="https://html-preview.github.io/?url=https://github.com/JAdelhelm/Automated-Anomaly-Detection-Preprocessing-Pipeline/blob/main/visualization/PipelineDQ.html" target="_blank">Structure of Preprocessing Pipeline</a>
-
+- I used sklearn's Pipeline and Transformer concept to create this preprocessing pipeline
+    - Pipeline: https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
+    - Transformer: https://scikit-learn.org/stable/modules/generated/sklearn.base.TransformerMixin.html
+      
 ## Description
 Anomaly detection is becoming increasingly important today, being utilized in various fields such as cybersecurity, data quality, healthcare, and many more. However, data preprocessing in this field is a crucial yet often time-consuming step. *Imagine gaining insights from unlabeled data while applying anomaly detection methods seamlessly.*
 
@@ -103,9 +106,7 @@ This pipeline is designed for unsupervised applications where labels are not ava
 - Pipeline can also be used to add extra columns (feature engineering)
     - Adds AnomalyLabel to rows
     - Marks univariate outliers
-- I used sklearn's Pipeline and Transformer concept to create this preprocessing pipeline
-    - Pipeline: https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
-    - Transformer: https://scikit-learn.org/stable/modules/generated/sklearn.base.TransformerMixin.html
+
 
 
 
